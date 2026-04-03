@@ -176,5 +176,4 @@ if st.session_state.step >= 6:
     c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
     st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
-    
-- [ ]     st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
+     st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
