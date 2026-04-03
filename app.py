@@ -7,12 +7,13 @@ fuel_impacts = {
     "Diesel": {"hike": 184.49, "current": 520.35}
 }
 
+# UPDATED TO SINGULAR
 categories = {
-    "Bikes": {"CD 70": 9, "CG 125": 12, "GS 150": 12, "YBR 125": 13},
-    "Hatchbacks": {"Suzuki Alto": 27, "Suzuki Cultus": 35, "Suzuki Wagon R": 35, "Suzuki Swift": 37, "Kia Picanto": 35, "Suzuki Mehran": 30},
-    "Sedans": {"Honda City": 40, "Toyota Yaris": 42, "Changan Alsvin": 40, "Honda Civic": 47, "Toyota Corolla": 55, "Hyundai Elantra": 50, "Proton Saga": 40},
-    "SUVs/Crossovers": {"Kia Sportage": 62, "Hyundai Tucson": 62, "Changan Oshan X7": 55, "MG HS": 55, "Haval H6": 58, "Haval Jolion": 55, "Kia Stonic": 45, "Cherry Tiggo 4 Pro": 51},
-    "Pickups/4x4s": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
+    "Bike": {"CD 70": 9, "CG 125": 12, "GS 150": 12, "YBR 125": 13},
+    "Hatchback": {"Suzuki Alto": 27, "Suzuki Cultus": 35, "Suzuki Wagon R": 35, "Suzuki Swift": 37, "Kia Picanto": 35, "Suzuki Mehran": 30},
+    "Sedan": {"Honda City": 40, "Toyota Yaris": 42, "Changan Alsvin": 40, "Honda Civic": 47, "Toyota Corolla": 55, "Hyundai Elantra": 50, "Proton Saga": 40},
+    "SUV/Crossover": {"Kia Sportage": 62, "Hyundai Tucson": 62, "Changan Oshan X7": 55, "MG HS": 55, "Haval H6": 58, "Haval Jolion": 55, "Kia Stonic": 45, "Cherry Tiggo 4 Pro": 51},
+    "Pickup/4x4": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
 # 2. IMAGE MAPPING: Synced with your GitHub Filenames
@@ -127,7 +128,7 @@ st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel e
 
 # --- PROGRESSIVE FLOW ---
 
-# STEP 1: CATEGORY
+# STEP 1: CATEGORY (SINGULAR)
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
 if st.session_state.step == 1:
     st.button("Continue", on_click=move_to_next)
@@ -155,7 +156,7 @@ if st.session_state.step >= 4:
     if st.session_state.step == 4:
         st.button("Continue", on_click=move_to_next)
 
-# STEP 5: TANK FULLNESS (Scale of 1-10)
+# STEP 5: TANK FULLNESS
 if st.session_state.step >= 5:
     tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", min_value=1, max_value=10, value=2, step=1)
     if st.session_state.step == 5:
@@ -163,7 +164,6 @@ if st.session_state.step >= 5:
 
 # --- THE REPORT ---
 if st.session_state.step >= 6:
-    # Calculation adjusted for the 1-10 scale
     refill_volume_factor = 1 - (tank_scale / 10)
     hike = fuel_impacts[fuel_choice]["hike"]
     per_tank = (tank_size * refill_volume_factor) * hike
