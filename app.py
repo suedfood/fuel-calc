@@ -1,12 +1,13 @@
 import streamlit as st
 from datetime import datetime
 
-# 1. THE DATA
+# 1. THE DATA: Official Hike Data as of April 3, 2026
 fuel_impacts = {
     "Petrol": {"hike": 137.24, "current": 458.41},
     "Diesel": {"hike": 184.49, "current": 520.35}
 }
 
+# SINGULAR CATEGORIES
 categories = {
     "Bike": {"CD 70": 9, "CG 125": 12, "GS 150": 12, "YBR 125": 13},
     "Hatchback": {"Suzuki Alto": 27, "Suzuki Cultus": 35, "Suzuki Wagon R": 35, "Suzuki Swift": 37, "Kia Picanto": 35, "Suzuki Mehran": 30},
@@ -15,7 +16,8 @@ categories = {
     "Pickup/4x4": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
-# 2. IMAGE MAPPING
+# 2. ASSET MAPPING: Using jsDelivr to fix Safari "Loading" hang
+# This points to the same files in your repo but adds Safari-compatible headers.
 cdn_base = "https://cdn.jsdelivr.net/gh/suedfood/fuel-calc@main/"
 
 vehicle_images = {
@@ -52,7 +54,7 @@ vehicle_images = {
 }
 
 # 3. UI SETUP
-st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽", layout="centered")
+st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽")
 
 if 'step' not in st.session_state:
     st.session_state.step = 1
@@ -62,76 +64,110 @@ def move_to_next():
 
 current_date = datetime.now().strftime("%B %d, %Y")
 
-# 4. THE CSS (Zero-Font Diagnostic Version)
 st.markdown(f"""
     <style>
-    /* Strictly System Fonts to ensure instant Safari rendering */
+    /* Font displays as System Font instantly, then swaps to Neue Haas */
+    @font-face {{
+        font-family: 'NeueHaas';
+        src: url('{cdn_base}NeueHaasDisplayRoman.ttf') format('truetype');
+        font-weight: 400;
+        font-display: swap;
+    }}
+    @font-face {{
+        font-family: 'NeueHaas';
+        src: url('{cdn_base}NeueHaasDisplayMediu.ttf') format('truetype');
+        font-weight: 500;
+        font-display: swap;
+    }}
+
     html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif !important;
+        font-family: 'NeueHaas', -apple-system, BlinkMacSystemFont, sans-serif !important;
         text-transform: none !important;
+        font-weight: 500 !important; 
     }}
 
-    /* Weights */
-    h1, h3, [data-testid="stMetricValue"], .stAlert p {{ font-weight: 600 !important; }}
-    label, p, .stCaption, [data-testid="stMetricLabel"] {{ font-weight: 400 !important; }}
-
-    /* Layout & Scales */
-    h1 {{ letter-spacing: -1px; font-size: 2.8rem !important; color: #1A1A1A; }}
-    .subtitle {{ font-size: 1.15rem; color: #555; margin-top: -20px; margin-bottom: 30px; }}
-    [data-testid="stImage"] img {{ width: 240px !important; height: 240px !important; object-fit: cover !important; border-radius: 12px !important; }}
-
-    @media (max-width: 640px) {{
-        h1 {{ font-size: 1.8rem !important; }}
-        .subtitle {{ font-size: 1.0rem !important; margin-top: -10px !important; }}
-        [data-testid="stImage"] img {{ width: 180px !important; height: 180px !important; }}
+    .subtitle {{
+        font-weight: 400 !important;
+        font-size: 1.15rem;
+        color: #555;
+        margin-top: -20px;
+        margin-bottom: 30px;
     }}
+
+    [data-testid="stImage"] img {{
+        width: 240px !important;
+        height: 240px !important;
+        object-fit: cover !important;
+        border-radius: 12px !important;
+        margin-top: -5px;
+        margin-bottom: 25px;
+    }}
+
+    /* Global Weights */
+    div[role="radiogroup"] label p {{ font-weight: 400 !important; }}
+    div[data-baseweb="select"] div {{ font-weight: 400 !important; }}
+    h1 {{ letter-spacing: -1.2px; font-size: 2.8rem !important; color: #1A1A1A; }}
+    h3 {{ letter-spacing: -0.5px; color: #444; }}
+    [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A; }}
+    [data-testid="stMetricLabel"] {{ letter-spacing: 0px; font-size: 15px !important; color: #555; font-weight: 400 !important; }}
+    .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
+    label, div[role="radiogroup"] label {{ font-size: 1rem !important; font-weight: 400 !important; }}
+    .stCaption {{ color: #888; font-weight: 400 !important; }}
     
-    .stAlert p {{ font-size: 1.15rem; line-height: 1.5; }}
-    .custom-footer {{ font-size: 0.85rem; color: #AAA; margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #EEE; }}
+    .custom-footer {{
+        font-family: 'NeueHaas' !important;
+        font-weight: 400 !important;
+        font-size: 0.85rem !important;
+        color: #AAA !important;
+        margin-top: 4rem;
+        padding-top: 1rem;
+        border-top: 1px solid #EEE;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
-# --- APP LAYOUT ---
+# --- HEADER SECTION ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {current_date}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
-# STEP 1
+# --- PROGRESSIVE FLOW ---
+
+# STEP 1: CATEGORY (SINGULAR)
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
 if st.session_state.step == 1:
     st.button("Continue", on_click=move_to_next)
 
-# STEP 2
+# STEP 2: MODEL & IMAGE
 if st.session_state.step >= 2:
     model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
     tank_size = categories[cat_choice][model_choice]
     
-    img_url = vehicle_images.get(model_choice)
-    if img_url:
-        st.image(img_url, width=240)
+    selected_img = vehicle_images.get(model_choice, "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400&h=400")
+    st.image(selected_img, width=240)
     
     if st.session_state.step == 2:
         st.button("Continue", on_click=move_to_next)
 
-# STEP 3
+# STEP 3: FUEL
 if st.session_state.step >= 3:
     fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"])
     if st.session_state.step == 3:
         st.button("Continue", on_click=move_to_next)
 
-# STEP 4
+# STEP 4: REFUEL FREQUENCY
 if st.session_state.step >= 4:
-    fills = st.slider("How many times do you refuel each month?", 1, 10, 2)
+    fills = st.slider("How many times do you refuel each month?", min_value=1, max_value=10, value=2, step=1)
     if st.session_state.step == 4:
         st.button("Continue", on_click=move_to_next)
 
-# STEP 5
+# STEP 5: TANK FULLNESS
 if st.session_state.step >= 5:
-    tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", 1, 10, 2)
+    tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", min_value=1, max_value=10, value=2, step=1)
     if st.session_state.step == 5:
         st.button("Show Final Report", on_click=move_to_next)
 
-# FINAL REPORT
+# --- THE REPORT ---
 if st.session_state.step >= 6:
     refill_volume_factor = 1 - (tank_scale / 10)
     hike = fuel_impacts[fuel_choice]["hike"]
@@ -145,4 +181,5 @@ if st.session_state.step >= 6:
     c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
     st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
+    
     st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
