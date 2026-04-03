@@ -19,19 +19,16 @@ categories = {
 github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
 
 vehicle_images = {
-    # Bikes
     "CD 70": github_base + "CD70.png",
     "CG 125": github_base + "CG%20125.png",
     "GS 150": github_base + "GS%20150.png",
     "YBR 125": github_base + "YBR%20125.png",
-    # Hatchbacks
     "Suzuki Alto": github_base + "Alto.png",
     "Suzuki Cultus": github_base + "Cultus.png",
     "Suzuki Wagon R": github_base + "Wagon%20R.png",
     "Suzuki Swift": github_base + "Swift.png",
     "Kia Picanto": github_base + "Picanto.png",
     "Suzuki Mehran": github_base + "Mehran.png",
-    # Sedans
     "Honda City": github_base + "Honda%20City.png",
     "Toyota Yaris": github_base + "Yaris.png",
     "Changan Alsvin": github_base + "Alswin.png",
@@ -39,7 +36,6 @@ vehicle_images = {
     "Toyota Corolla": github_base + "Corolla.png",
     "Hyundai Elantra": github_base + "Elantra.png",
     "Proton Saga": github_base + "Proton%20Saga.png",
-    # SUVs/Crossovers
     "Kia Sportage": github_base + "Sportage.png",
     "Hyundai Tucson": github_base + "Tucson.png",
     "Changan Oshan X7": github_base + "Oshan%20X7.png",
@@ -48,10 +44,9 @@ vehicle_images = {
     "Haval Jolion": github_base + "Haval%20Jolion.png",
     "Kia Stonic": github_base + "Kia%20Stonic.png",
     "Cherry Tiggo 4 Pro": github_base + "Cherry%20Tiggo%20Pro%204.png",
-    # Pickups/4x4s
     "Toyota Hilux/Revo": github_base + "Revo.png",
     "Isuzu D-Max": github_base + "ISUZU%20D-Max.png",
-    "JAC T8": github_base + "Jac%20T-8.png",
+    "Jac T-8": github_base + "Jac%20T-8.png",
     "Toyota Fortuner": github_base + "Fortuner.png",
     "Land Cruiser": github_base + "Land%20Cruiser.png"
 }
@@ -86,7 +81,6 @@ st.markdown(f"""
         font-weight: 500 !important; 
     }}
 
-    /* IMAGE STYLING: 240px Square */
     [data-testid="stImage"] img {{
         width: 240px !important;
         height: 240px !important;
@@ -105,6 +99,17 @@ st.markdown(f"""
     .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
     label, div[role="radiogroup"] label {{ font-size: 1rem !important; font-weight: 400 !important; }}
     .stCaption {{ color: #888; font-weight: 400 !important; }}
+
+    /* Classy Footer Styling */
+    .footer {{
+        font-weight: 400 !important;
+        font-size: 0.8rem;
+        color: #AAA;
+        text-align: left;
+        margin-top: 4rem;
+        border-top: 1px solid #EEE;
+        padding-top: 1rem;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -124,7 +129,8 @@ if st.session_state.step >= 2:
     model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
     tank_size = categories[cat_choice][model_choice]
     
-    selected_img = vehicle_images.get(model_choice, "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400&h=400")
+    img_url = vehicle_images.get(model_choice, "")
+    selected_img = img_url if img_url else "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400&h=400"
     st.image(selected_img, width=240)
     
     if st.session_state.step == 2:
@@ -162,3 +168,6 @@ if st.session_state.step >= 6:
     c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
     st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
+
+# --- FOOTER ---
+st.markdown('<p class="footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
