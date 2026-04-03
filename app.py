@@ -46,7 +46,8 @@ st.markdown(f"""
     }}
 
     /* ANCHOR POINTS - Medium (500) */
-    h1, [data-testid="stMetricValue"], .stAlert p {{
+    /* Title, Metric Value, Subheaders, and Alert */
+    h1, h3, [data-testid="stMetricValue"], .stAlert p {{
         font-weight: 500 !important;
         color: #1A1A1A;
     }}
@@ -57,6 +58,12 @@ st.markdown(f"""
         font-size: 2.8rem !important;
     }}
 
+    /* Subheader (Fuel Impact Report) - Restored to Medium */
+    h3 {{
+        letter-spacing: -0.5px;
+        font-size: 1.5rem !important;
+    }}
+
     /* Metrics Value Scale */
     [data-testid="stMetricValue"] {{
         font-size: 42px !important;
@@ -64,8 +71,8 @@ st.markdown(f"""
     }}
 
     /* INSTRUCTIONAL TEXT - Roman (400) */
-    /* Metric Labels, Input Labels, Radio Labels, and Date */
-    h3, label, div[role="radiogroup"] label, [data-testid="stMetricLabel"], .stCaption {{
+    /* Labels, Radio Labels, and Captions */
+    label, div[role="radiogroup"] label, [data-testid="stMetricLabel"], .stCaption {{
         font-weight: 400 !important;
     }}
 
@@ -74,18 +81,22 @@ st.markdown(f"""
         font-size: 15px !important;
         color: #666;
     }}
-    
-    h3 {{
-        letter-spacing: -0.5px;
-        color: #444;
-    }}
 
     label, div[role="radiogroup"] label {{
         font-size: 1rem !important;
         color: #333;
     }}
 
-    /* The Final Message Box Balance */
+    /* Dynamic Date (Roman 400 for a lighter touch below the Title) */
+    .date-subheader {{
+        font-family: 'NeueHaas' !important;
+        font-weight: 400 !important;
+        font-size: 1.2rem;
+        color: #444;
+        margin-bottom: 2rem;
+    }}
+
+    /* Alert Box Polish */
     .stAlert p {{
         font-size: 1.15rem;
         line-height: 1.5;
@@ -101,7 +112,7 @@ st.markdown(f"""
 
 # --- HEADER SECTION ---
 st.title("⛽ Pakistan Fuel Hike Impact")
-st.markdown(f"### {current_date}")
+st.markdown(f'<p class="date-subheader">{current_date}</p>', unsafe_allow_html=True)
 
 # --- SELECTION FLOW ---
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
@@ -116,7 +127,6 @@ col1, col2 = st.columns(2)
 with col1:
     fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"])
 with col2:
-    # Renamed label as requested
     fills = st.slider("How many times do you refuel each month?", min_value=0.5, max_value=12.0, value=2.0, step=0.5)
 
 # --- CALCULATIONS ---
