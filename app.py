@@ -15,22 +15,18 @@ categories = {
     "Pickups/4x4s": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
-# 2. COMPLETE IMAGE MAPPING INFRASTRUCTURE
-# Paste your custom image URLs between the quotes for each vehicle below.
+# 2. IMAGE MAPPING
 vehicle_images = {
-    # Bikes
-    "CD 70": "https://placehold.co/100x100",
+    "CD 70": "https://placehold.co/120x120",
     "CG 125": "",
     "GS 150": "",
     "YBR 125": "",
-    # Hatchbacks
     "Suzuki Alto": "",
     "Suzuki Cultus": "",
     "Suzuki Wagon R": "",
     "Suzuki Swift": "",
     "Kia Picanto": "",
     "Suzuki Mehran": "",
-    # Sedans
     "Honda City": "",
     "Toyota Yaris": "",
     "Changan Alsvin": "",
@@ -38,7 +34,6 @@ vehicle_images = {
     "Toyota Corolla": "",
     "Hyundai Elantra": "",
     "Proton Saga": "",
-    # SUVs/Crossovers
     "Kia Sportage": "",
     "Hyundai Tucson": "",
     "Changan Oshan X7": "",
@@ -47,7 +42,6 @@ vehicle_images = {
     "Haval Jolion": "",
     "Kia Stonic": "",
     "Cherry Tiggo 4 Pro": "",
-    # Pickups/4x4s
     "Toyota Hilux/Revo": "",
     "Isuzu D-Max": "",
     "JAC T8": "",
@@ -69,76 +63,42 @@ github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
 
 st.markdown(f"""
     <style>
-    /* 400 - Roman */
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
         font-weight: 400;
     }}
-    /* 500 - Medium */
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayMediu.ttf') format('truetype');
         font-weight: 500;
     }}
 
-    /* Global Font Override - Strictly Neue Haas Medium */
     html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
         text-transform: none !important;
         font-weight: 500 !important; 
     }}
 
-    /* SURGICAL WEIGHT REDUCTION (To Roman 400) */
+    /* IMAGE STYLING: Tiny, Square, Cute */
+    [data-testid="stImage"] img {{
+        width: 120px !important;
+        height: 120px !important;
+        object-fit: cover !important;
+        border-radius: 12px !important;
+        margin-top: -10px;
+        margin-bottom: 20px;
+    }}
+
     div[role="radiogroup"] label p {{ font-weight: 400 !important; }}
     div[data-baseweb="select"] div {{ font-weight: 400 !important; }}
-
-    /* Title Styling */
-    h1 {{
-        letter-spacing: -1.2px;
-        font-size: 2.8rem !important;
-        color: #1A1A1A;
-    }}
-
-    /* Dynamic Date & Subheaders */
-    h3 {{
-        letter-spacing: -0.5px;
-        color: #444;
-    }}
-
-    /* The Numbers */
-    [data-testid="stMetricValue"] {{
-        font-size: 42px !important;
-        letter-spacing: -0.8px;
-        color: #1A1A1A;
-    }}
-
-    /* Metric Labels */
-    [data-testid="stMetricLabel"] {{
-        letter-spacing: 0px;
-        font-size: 15px !important;
-        color: #555;
-        font-weight: 400 !important;
-    }}
-    
-    /* The Final Message Box */
-    .stAlert p {{
-        font-size: 1.15rem;
-        line-height: 1.5;
-        font-weight: 500 !important;
-    }}
-
-    /* Input Labels and Radio Labels */
-    label, div[role="radiogroup"] label {{
-        font-size: 1rem !important;
-        font-weight: 400 !important;
-    }}
-
-    /* Captions */
-    .stCaption {{
-        color: #888;
-        font-weight: 400 !important;
-    }}
+    h1 {{ letter-spacing: -1.2px; font-size: 2.8rem !important; color: #1A1A1A; }}
+    h3 {{ letter-spacing: -0.5px; color: #444; }}
+    [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A; }}
+    [data-testid="stMetricLabel"] {{ letter-spacing: 0px; font-size: 15px !important; color: #555; font-weight: 400 !important; }}
+    .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
+    label, div[role="radiogroup"] label {{ font-size: 1rem !important; font-weight: 400 !important; }}
+    .stCaption {{ color: #888; font-weight: 400 !important; }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -153,15 +113,15 @@ cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizo
 if st.session_state.step == 1:
     st.button("Continue", on_click=move_to_next)
 
-# STEP 2: MODEL & DYNAMIC IMAGE
+# STEP 2: MODEL & TINY SQUARE IMAGE
 if st.session_state.step >= 2:
     model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
     tank_size = categories[cat_choice][model_choice]
     
-    # Logic: Look up image or use default halftone if link is missing
     img_url = vehicle_images.get(model_choice, "")
-    selected_img = img_url if img_url else "https://via.placeholder.com/600x250.png?text=Halftone+Vehicle+Graphic"
-    st.image(selected_img, use_column_width=True)
+    # Using a high-quality placeholder for any car that doesn't have a link yet
+    selected_img = img_url if img_url else "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=300&h=300"
+    st.image(selected_img, width=120)
     
     if st.session_state.step == 2:
         st.button("Continue", on_click=move_to_next)
