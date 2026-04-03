@@ -26,7 +26,14 @@ github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
 
 st.markdown(f"""
     <style>
-    /* 500 - Medium (Matching your 'Mediu' filename) */
+    /* 400 - Roman */
+    @font-face {{
+        font-family: 'NeueHaas';
+        src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
+        font-weight: 400;
+    }}
+
+    /* 500 - Medium */
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayMediu.ttf') format('truetype');
@@ -37,10 +44,21 @@ st.markdown(f"""
     html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
         text-transform: none !important;
-        font-weight: 500 !important; /* Unified sturdy weight */
+        font-weight: 500 !important; 
     }}
 
-    /* Title Styling (Medium 500, Title Case) */
+    /* SURGICAL WEIGHT REDUCTION (To Roman 400) */
+    /* 1. Category Labels (Radio) */
+    div[role="radiogroup"] label p {{
+        font-weight: 400 !important;
+    }}
+
+    /* 2. Dropdown Text (Vehicles & Fuel) */
+    div[data-baseweb="select"] div {{
+        font-weight: 400 !important;
+    }}
+
+    /* Title Styling */
     h1 {{
         letter-spacing: -1.2px;
         font-size: 2.8rem !important;
@@ -53,7 +71,7 @@ st.markdown(f"""
         color: #444;
     }}
 
-    /* The Numbers (Medium 500) */
+    /* The Numbers */
     [data-testid="stMetricValue"] {{
         font-size: 42px !important;
         letter-spacing: -0.8px;
@@ -67,7 +85,7 @@ st.markdown(f"""
         color: #555;
     }}
     
-    /* The Final Message Box - Returning to Medium 500 as requested */
+    /* The Final Message Box */
     .stAlert p {{
         font-size: 1.15rem;
         line-height: 1.5;
@@ -117,7 +135,7 @@ c1, c2 = st.columns(2)
 c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
 c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
 
-# Final Bottom Line Message (Reverted to Medium 500)
+# Final Bottom Line Message
 st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
 
 st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
