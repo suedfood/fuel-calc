@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 
-# 1. THE DATA
+# 1. THE DATA: Official Hike Data as of April 3, 2026
 fuel_impacts = {
     "Petrol": {"hike": 137.24, "current": 458.41},
     "Diesel": {"hike": 184.49, "current": 520.35}
@@ -42,18 +42,10 @@ st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽", layout="cent
 if 'show_report' not in st.session_state:
     st.session_state.show_report = False
 
-# 3. CSS FORCE FIELD
+# 3. THE CSS FORCE FIELD (NEUE HAAS LOCK)
 st.markdown(f"""
     <style>
-    /* 1. THEME LOCK */
-    :root {{
-        --primary-color: #FF4B4B;
-        --background-color: #FFFFFF;
-        --secondary-background-color: #F0F2F6;
-        --text-color: #31333F;
-    }}
-
-    /* 2. FONT INJECTION */
+    /* 1. FONT INJECTION */
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
@@ -65,64 +57,68 @@ st.markdown(f"""
         font-weight: 500; font-display: swap;
     }}
 
-    /* 3. GLOBAL STYLE */
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
-        background-color: #FFFFFF !important;
-        color: #31333F !important;
+    /* 2. GLOBAL OVERRIDE - Targeting every possible Streamlit element */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], 
+    .stMarkdown, p, span, label, div, input, select, button {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
+        background-color: white !important;
+        color: #31333F !important;
     }}
 
-    /* Title & Date Header: Medium 500 */
-    h1, h2, h3 {{
+    /* Title Styling (Medium Weight) */
+    h1 {{ 
+        font-family: 'NeueHaas', sans-serif !important;
+        font-weight: 500 !important; 
+        font-size: clamp(1.8rem, 5vw, 2.8rem) !important; 
+        letter-spacing: -1.2px !important; 
         color: #1A1A1A !important;
-        font-weight: 500 !important;
-        letter-spacing: -0.02em !important;
     }}
 
-    h1 {{ font-size: clamp(1.8rem, 5vw, 2.8rem) !important; }}
-
-    /* Metrics: Medium 500 */
+    /* Metric Values (Medium Weight) */
     [data-testid="stMetricValue"] {{ 
+        font-family: 'NeueHaas', sans-serif !important;
         font-weight: 500 !important; 
         font-size: clamp(2rem, 8vw, 42px) !important;
         color: #1A1A1A !important;
     }}
 
-    /* Labels & Body: Roman 400 */
-    p, span, label, [data-testid="stMetricLabel"] {{
+    /* Labels & Body (Roman Weight) */
+    [data-testid="stMetricLabel"], .stCaption, .subtitle, label {{
+        font-family: 'NeueHaas', sans-serif !important;
         font-weight: 400 !important;
-        color: #31333F !important;
+        color: #555 !important;
     }}
 
     .subtitle {{
-        font-weight: 400 !important;
-        color: #555 !important;
-        font-size: clamp(1rem, 4vw, 1.15rem);
+        font-size: clamp(1rem, 4vw, 1.15rem) !important;
         margin-top: -20px;
         margin-bottom: 30px;
     }}
 
-    /* BUTTON: Medium 500 */
+    /* 3. BUTTON HARDENING (Let's Go!) */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: #FFFFFF !important;
+        border: none !important;
         border-radius: 8px !important;
+        padding: 0.6rem !important;
         width: 100% !important;
         font-weight: 500 !important;
-        border: none !important;
-        padding: 0.6rem !important;
+        font-family: 'NeueHaas', sans-serif !important;
     }}
-
     .stButton > button p {{ color: white !important; font-weight: 500 !important; }}
 
-    /* IMAGE FIX */
+    /* 4. IMAGE RESPONSIVE BLENDING */
     [data-testid="stImage"] img {{
-        width: 240px !important;
+        max-width: 100% !important;
         height: auto !important;
+        width: 240px !important;
+        border-radius: 12px;
         mix-blend-mode: multiply;
         background-color: white !important;
     }}
 
+    /* Hide UI clutter */
     #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
@@ -132,36 +128,45 @@ st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
-# AUTO-PROGRESSIVE FLOW
+# --- SEAMLESS AUTO-REVEAL FLOW ---
+# STEP 1: CATEGORY (Starting with no selection)
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None)
 
 if cat_choice:
+    # STEP 2: MODEL
     model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose car...")
     
     if model_choice:
         tank_size = categories[cat_choice][model_choice]
         st.image(vehicle_images.get(model_choice, github_base + "CD70.png"))
         
+        # STEP 3: FUEL
         fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"], index=None, placeholder="Select fuel...")
         
         if fuel_choice:
+            # STEP 4: REFILLS
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2)
+            
+            # STEP 5: FULLNESS
             tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", 1, 10, 2)
             
+            # THE ONLY BUTTON
             if st.button("Let's Go!"):
                 st.session_state.show_report = True
 
-# THE REPORT
+# --- THE FINAL REPORT ---
 if st.session_state.show_report:
+    # Calculation
     refill_vol = 1 - (tank_scale / 10)
-    per_tank = (tank_size * refill_vol) * fuel_impacts[fuel_choice]["hike"]
+    hike = fuel_impacts[fuel_choice]["hike"]
+    per_tank = (tank_size * refill_vol) * hike
     monthly = per_tank * fills
 
     st.divider()
     st.subheader("Fuel Impact Report")
     c1, c2 = st.columns(2)
     c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
-    c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
+    c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}" if 'monthly_total' in locals() else f"Rs. {monthly:,.0f}")
     
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
     st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
