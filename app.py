@@ -15,20 +15,56 @@ categories = {
     "Pickups/4x4s": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
-# 2. UI SETUP & FONT INJECTION
+# 2. COMPLETE IMAGE MAPPING INFRASTRUCTURE
+# Paste your custom image URLs between the quotes for each vehicle below.
+vehicle_images = {
+    # Bikes
+    "CD 70": "",
+    "CG 125": "",
+    "GS 150": "",
+    "YBR 125": "",
+    # Hatchbacks
+    "Suzuki Alto": "",
+    "Suzuki Cultus": "",
+    "Suzuki Wagon R": "",
+    "Suzuki Swift": "",
+    "Kia Picanto": "",
+    "Suzuki Mehran": "",
+    # Sedans
+    "Honda City": "",
+    "Toyota Yaris": "",
+    "Changan Alsvin": "",
+    "Honda Civic": "",
+    "Toyota Corolla": "",
+    "Hyundai Elantra": "",
+    "Proton Saga": "",
+    # SUVs/Crossovers
+    "Kia Sportage": "",
+    "Hyundai Tucson": "",
+    "Changan Oshan X7": "",
+    "MG HS": "",
+    "Haval H6": "",
+    "Haval Jolion": "",
+    "Kia Stonic": "",
+    "Cherry Tiggo 4 Pro": "",
+    # Pickups/4x4s
+    "Toyota Hilux/Revo": "",
+    "Isuzu D-Max": "",
+    "JAC T8": "",
+    "Toyota Fortuner": "",
+    "Land Cruiser": ""
+}
+
+# 3. UI SETUP & FONT INJECTION
 st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽")
 
-# Initialize progress tracking
 if 'step' not in st.session_state:
     st.session_state.step = 1
 
 def move_to_next():
     st.session_state.step += 1
 
-# Dynamic Date formatting
 current_date = datetime.now().strftime("%B %d, %Y")
-
-# GitHub Raw Base URL
 github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
 
 st.markdown(f"""
@@ -39,7 +75,6 @@ st.markdown(f"""
         src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
         font-weight: 400;
     }}
-
     /* 500 - Medium */
     @font-face {{
         font-family: 'NeueHaas';
@@ -55,15 +90,8 @@ st.markdown(f"""
     }}
 
     /* SURGICAL WEIGHT REDUCTION (To Roman 400) */
-    /* 1. Category Labels (Radio) */
-    div[role="radiogroup"] label p {{
-        font-weight: 400 !important;
-    }}
-
-    /* 2. Dropdown Text (Vehicles & Fuel) */
-    div[data-baseweb="select"] div {{
-        font-weight: 400 !important;
-    }}
+    div[role="radiogroup"] label p {{ font-weight: 400 !important; }}
+    div[data-baseweb="select"] div {{ font-weight: 400 !important; }}
 
     /* Title Styling */
     h1 {{
@@ -122,16 +150,18 @@ st.markdown(f"### {current_date}")
 
 # STEP 1: CATEGORY
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
-
 if st.session_state.step == 1:
     st.button("Continue", on_click=move_to_next)
 
-# STEP 2: MODEL
+# STEP 2: MODEL & DYNAMIC IMAGE
 if st.session_state.step >= 2:
     model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
     tank_size = categories[cat_choice][model_choice]
     
-    st.image("https://via.placeholder.com/600x250.png?text=Halftone+Vehicle+Graphic", use_column_width=True)
+    # Logic: Look up image or use default halftone if link is missing
+    img_url = vehicle_images.get(model_choice, "")
+    selected_img = img_url if img_url else "https://via.placeholder.com/600x250.png?text=Halftone+Vehicle+Graphic"
+    st.image(selected_img, use_column_width=True)
     
     if st.session_state.step == 2:
         st.button("Continue", on_click=move_to_next)
@@ -139,21 +169,18 @@ if st.session_state.step >= 2:
 # STEP 3: FUEL
 if st.session_state.step >= 3:
     fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"])
-    
     if st.session_state.step == 3:
         st.button("Continue", on_click=move_to_next)
 
 # STEP 4: REFUEL FREQUENCY
 if st.session_state.step >= 4:
     fills = st.slider("How many times do you refuel each month?", min_value=0.5, max_value=12.0, value=2.0, step=0.5)
-    
     if st.session_state.step == 4:
         st.button("Continue", on_click=move_to_next)
 
 # STEP 5: TANK FULLNESS
 if st.session_state.step >= 5:
     tank_fullness = st.slider("On average, how full is your vehicle's tank when you refuel?", min_value=0, max_value=100, value=0, step=5, format="%d%%")
-    
     if st.session_state.step == 5:
         st.button("Show Final Report", on_click=move_to_next)
 
@@ -166,11 +193,8 @@ if st.session_state.step >= 6:
 
     st.divider()
     st.subheader("Fuel Impact Report")
-
     c1, c2 = st.columns(2)
     c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
     c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
-
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
-
     st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
