@@ -18,6 +18,13 @@ categories = {
 # 2. UI SETUP & FONT INJECTION
 st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽")
 
+# Initialize session state for unlocking questions
+if 'step' not in st.session_state:
+    st.session_state.step = 1
+
+def next_step():
+    st.session_state.step += 1
+
 # Dynamic Date formatting
 current_date = datetime.now().strftime("%B %d, %Y")
 
@@ -40,107 +47,131 @@ st.markdown(f"""
         font-weight: 500;
     }}
 
-    /* Global Font Override - Strictly Neue Haas Medium */
+    /* Global Font Override */
     html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
         text-transform: none !important;
-        font-weight: 500 !important; 
     }}
 
-    /* SURGICAL WEIGHT REDUCTION (To Roman 400) */
-    /* 1. Category Labels (Radio) */
-    div[role="radiogroup"] label p {{
-        font-weight: 400 !important;
+    /* ANCHOR POINTS - Medium (500) */
+    h1, h3, [data-testid="stMetricValue"], .stAlert p, .date-subheader {{
+        font-weight: 500 !important;
+        color: #1A1A1A;
     }}
 
-    /* 2. Dropdown Text (Vehicles & Fuel) */
-    div[data-baseweb="select"] div {{
-        font-weight: 400 !important;
-    }}
-
-    /* Title Styling */
+    /* Title Scale */
     h1 {{
         letter-spacing: -1.2px;
         font-size: 2.8rem !important;
-        color: #1A1A1A;
     }}
 
-    /* Dynamic Date & Subheaders */
+    /* Date Subheader - Medium 500 */
+    .date-subheader {{
+        font-family: 'NeueHaas' !important;
+        font-size: 1.2rem;
+        color: #444;
+        margin-bottom: 2rem;
+        letter-spacing: -0.3px;
+    }}
+
+    /* Subheader - Medium 500 */
     h3 {{
         letter-spacing: -0.5px;
-        color: #444;
+        font-size: 1.5rem !important;
     }}
 
-    /* The Numbers */
+    /* Numbers - Medium 500 */
     [data-testid="stMetricValue"] {{
         font-size: 42px !important;
         letter-spacing: -0.8px;
-        color: #1A1A1A;
     }}
 
-    /* Metric Labels */
-    [data-testid="stMetricLabel"] {{
-        letter-spacing: 0px;
-        font-size: 15px !important;
-        color: #555;
+    /* INSTRUCTIONAL TEXT - Roman (400) */
+    label, div[role="radiogroup"] label, [data-testid="stMetricLabel"], .stCaption, div[data-baseweb="select"] div {{
+        font-weight: 400 !important;
     }}
-    
-    /* The Final Message Box */
+
+    /* Label Styling */
+    [data-testid="stMetricLabel"] {{
+        font-size: 15px !important;
+        color: #666;
+    }}
+
+    label, div[role="radiogroup"] label {{
+        font-size: 1rem !important;
+        color: #333;
+    }}
+
+    /* Final Message Box - Medium 500 */
     .stAlert p {{
         font-size: 1.15rem;
         line-height: 1.5;
     }}
 
-    /* Input Labels and Radio Labels */
-    label, div[role="radiogroup"] label {{
-        font-size: 1rem !important;
-    }}
-
-    /* Captions */
+    /* Captions - Roman 400 */
     .stCaption {{
         color: #888;
+        font-size: 0.9rem !important;
     }}
     </style>
     """, unsafe_allow_html=True)
 
 # --- HEADER SECTION ---
-st.title("Pakistan Fuel Hike Impact")
-st.markdown(f"### {current_date}")
+st.title("⛽ Pakistan Fuel Hike Impact")
+st.markdown(f'<p class="date-subheader">{current_date}</p>', unsafe_allow_html=True)
 
-# --- SELECTION FLOW ---
+# --- STEP 1: CATEGORY ---
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
 
-model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
-tank_size = categories[cat_choice][model_choice]
+if st.session_state.step == 1:
+    st.button("Continue", on_click=next_step)
 
-# HALFTONE IMAGE PLACEHOLDER
-st.image("https://via.placeholder.com/600x250.png?text=Halftone+Vehicle+Graphic", use_column_width=True)
+# --- STEP 2: MODEL ---
+if st.session_state.step >= 2:
+    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
+    tank_size = categories[cat_choice][model_choice]
+    
+    st.image("https://via.placeholder.com/600x250.png?text=Halftone+Vehicle+Graphic", use_column_width=True)
+    
+    if st.session_state.step == 2:
+        st.button("Continue", on_click=next_step)
 
-col1, col2 = st.columns(2)
-with col1:
+# --- STEP 3: FUEL ---
+if st.session_state.step >= 3:
     fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"])
-with col2:
+    
+    if st.session_state.step == 3:
+        st.button("Continue", on_click=next_step)
+
+# --- STEP 4: REFUEL FREQUENCY ---
+if st.session_state.step >= 4:
     fills = st.slider("How many times do you refuel each month?", min_value=0.5, max_value=12.0, value=2.0, step=0.5)
+    
+    if st.session_state.step == 4:
+        st.button("Continue", on_click=next_step)
 
-# NEW QUESTION
-tank_fullness = st.slider("On average, how full is your vehicle's tank when you refuel?", min_value=0, max_value=100, value=0, step=5, format="%d%%")
+# --- STEP 5: TANK FULLNESS ---
+if st.session_state.step >= 5:
+    tank_fullness = st.slider("On average, how full is your vehicle's tank when you refuel?", min_value=0, max_value=100, value=0, step=5, format="%d%%")
+    
+    if st.session_state.step == 5:
+        st.button("Show Final Report", on_click=next_step)
 
-# --- CALCULATIONS ---
-# Logic: Calculate the actual volume of fuel added (e.g., if 20% full, you refill 80% of tank size)
-refill_volume_factor = 1 - (tank_fullness / 100)
-hike = fuel_impacts[fuel_choice]["hike"]
-per_tank = (tank_size * refill_volume_factor) * hike
-monthly_total = per_tank * fills
+# --- FINAL REPORT ---
+if st.session_state.step >= 6:
+    # Calculations
+    refill_volume_factor = 1 - (tank_fullness / 100)
+    hike = fuel_impacts[fuel_choice]["hike"]
+    per_tank = (tank_size * refill_volume_factor) * hike
+    monthly_total = per_tank * fills
 
-# --- THE REPORT ---
-st.divider()
-st.subheader("Fuel Impact Report")
+    st.divider()
+    st.subheader("Fuel Impact Report")
 
-c1, c2 = st.columns(2)
-c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
-c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
+    c1, c2 = st.columns(2)
+    c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
+    c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
 
-# Final Bottom Line Message
-st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
+    st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
 
-st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
+    st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
