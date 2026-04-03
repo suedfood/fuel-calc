@@ -69,6 +69,6 @@ c1.metric("Additional Cost / Tank", f"Rs. {per_tank:,.0f}")
 c2.metric("Total Additional Monthly Cost", f"Rs. {monthly_total:,.0f}")
 
 # Fixed your wording here
-st.error(f"**TO CONTINUE BUSINESS AS USUAL, YOU'LL HAVE TO PAY AN ADDITIONAL RS. {monthly_total:,.0f} PER MONTH**")
+st.error(f"**To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month**")
 
 st.caption("Data reflects the April 3rd official price re-basing compared to Ramadan 2026.")
