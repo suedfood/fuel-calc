@@ -127,7 +127,7 @@ st.markdown(f"""
     """, unsafe_allow_html=True)
 
 # --- HEADER SECTION ---
-st.title("Pakistan Fuel Hike Impact")
+st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {current_date}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
