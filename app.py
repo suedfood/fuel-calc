@@ -42,25 +42,25 @@ st.markdown(f"""
     /* Global Font Override - Strictly Neue Haas */
     html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
+        text-transform: none !important;
     }}
 
-    /* Title Styling (Reduced to Medium 500, Title Case) */
+    /* Title Styling (Medium 500, Title Case) */
     h1 {{
         font-weight: 500 !important;
         letter-spacing: -1.2px;
-        text-transform: none !important;
         font-size: 2.8rem !important;
         color: #1A1A1A;
     }}
 
-    /* Dynamic Date & Subheaders (Roman 400) */
+    /* Dynamic Date & Subheaders (Medium 500 for sturdiness) */
     h3 {{
-        font-weight: 400 !important;
+        font-weight: 500 !important;
         letter-spacing: -0.5px;
         color: #444;
     }}
 
-    /* The Numbers (Reduced to Medium 500) */
+    /* The Numbers (Medium 500) */
     [data-testid="stMetricValue"] {{
         font-weight: 500;
         font-size: 42px !important;
@@ -68,26 +68,31 @@ st.markdown(f"""
         color: #1A1A1A;
     }}
 
-    /* Metric Labels (Roman 400 to contrast with Medium numbers) */
+    /* Metric Labels (Medium 500 - Now one weight heavier) */
     [data-testid="stMetricLabel"] {{
-        font-weight: 400;
-        text-transform: none !important;
+        font-weight: 500;
         letter-spacing: 0px;
         font-size: 15px !important;
-        color: #666;
+        color: #555;
     }}
     
-    /* The Final Message Box (Medium 500) */
+    /* The Final Message Box - Reduced to Roman 400 for balance */
     .stAlert p {{
-        font-weight: 500 !important;
+        font-weight: 400 !important;
         font-size: 1.15rem;
         line-height: 1.5;
     }}
 
-    /* Input Labels (Roman 400) */
-    label {{
-        font-weight: 400 !important;
+    /* Input Labels and Radio Labels (Medium 500) */
+    label, div[role="radiogroup"] label {{
+        font-weight: 500 !important;
         font-size: 1rem !important;
+    }}
+
+    /* Captions (Medium 500) */
+    .stCaption {{
+        font-weight: 500 !important;
+        color: #888;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -124,7 +129,7 @@ c1, c2 = st.columns(2)
 c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
 c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
 
-# Final Bottom Line Message (Medium Weight, No Bolding)
+# Final Bottom Line Message (Roman Weight 400 as requested)
 st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
 
 st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
