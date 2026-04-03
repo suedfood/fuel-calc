@@ -26,12 +26,6 @@ github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
 
 st.markdown(f"""
     <style>
-    /* 400 - Roman */
-    @font-face {{
-        font-family: 'NeueHaas';
-        src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
-        font-weight: 400;
-    }}
     /* 500 - Medium (Matching your 'Mediu' filename) */
     @font-face {{
         font-family: 'NeueHaas';
@@ -39,68 +33,60 @@ st.markdown(f"""
         font-weight: 500;
     }}
 
-    /* Global Font Override */
-    html, body, [class*="st-"], div, span, p {{
+    /* Global Font Override - Strictly Neue Haas Medium */
+    html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
         text-transform: none !important;
+        font-weight: 500 !important; /* Unified sturdy weight */
     }}
 
-    /* ANCHOR POINTS - Medium (500) */
-    h1, [data-testid="stMetricValue"], .stAlert p {{
-        font-weight: 500 !important;
-        color: #1A1A1A;
-    }}
-
-    /* Title Scale */
+    /* Title Styling (Medium 500, Title Case) */
     h1 {{
         letter-spacing: -1.2px;
         font-size: 2.8rem !important;
+        color: #1A1A1A;
     }}
 
-    /* Metrics Value Scale */
-    [data-testid="stMetricValue"] {{
-        font-size: 42px !important;
-        letter-spacing: -0.8px;
-    }}
-
-    /* INSTRUCTIONAL TEXT - Roman (400) */
-    /* Metric Labels, Input Labels, Radio Labels, and Date */
-    h3, label, div[role="radiogroup"] label, [data-testid="stMetricLabel"], .stCaption {{
-        font-weight: 400 !important;
-    }}
-
-    /* Label Spacing and Color */
-    [data-testid="stMetricLabel"] {{
-        font-size: 15px !important;
-        color: #666;
-    }}
-    
+    /* Dynamic Date & Subheaders */
     h3 {{
         letter-spacing: -0.5px;
         color: #444;
     }}
 
-    label, div[role="radiogroup"] label {{
-        font-size: 1rem !important;
-        color: #333;
+    /* The Numbers (Medium 500) */
+    [data-testid="stMetricValue"] {{
+        font-size: 42px !important;
+        letter-spacing: -0.8px;
+        color: #1A1A1A;
     }}
 
-    /* The Final Message Box Balance */
+    /* Metric Labels */
+    [data-testid="stMetricLabel"] {{
+        letter-spacing: 0px;
+        font-size: 15px !important;
+        color: #555;
+    }}
+    
+    /* The Final Message Box - Returning to Medium 500 as requested */
     .stAlert p {{
         font-size: 1.15rem;
         line-height: 1.5;
     }}
 
+    /* Input Labels and Radio Labels */
+    label, div[role="radiogroup"] label {{
+        font-size: 1rem !important;
+    }}
+
     /* Captions */
     .stCaption {{
         color: #888;
-        font-size: 0.9rem !important;
     }}
     </style>
     """, unsafe_allow_html=True)
 
 # --- HEADER SECTION ---
-st.title("⛽ Pakistan Fuel Hike Impact")
+st.title("Pakistan Fuel Hike Impact")
 st.markdown(f"### {current_date}")
 
 # --- SELECTION FLOW ---
@@ -116,8 +102,7 @@ col1, col2 = st.columns(2)
 with col1:
     fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"])
 with col2:
-    # Renamed label as requested
-    fills = st.slider("How many times do you refuel each month?", min_value=0.5, max_value=12.0, value=2.0, step=0.5)
+    fills = st.slider("Fills per month", min_value=0.5, max_value=12.0, value=2.0, step=0.5)
 
 # --- CALCULATIONS ---
 hike = fuel_impacts[fuel_choice]["hike"]
@@ -132,7 +117,7 @@ c1, c2 = st.columns(2)
 c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
 c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
 
-# Final Bottom Line Message (Medium 500)
+# Final Bottom Line Message (Reverted to Medium 500)
 st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
 
 st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
