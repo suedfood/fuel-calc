@@ -19,7 +19,7 @@ categories = {
 # Paste your custom image URLs between the quotes for each vehicle below.
 vehicle_images = {
     # Bikes
-    "CD 70": "",
+    "CD 70": "https://placehold.co/600x400",
     "CG 125": "",
     "GS 150": "",
     "YBR 125": "",
