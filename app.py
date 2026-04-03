@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 
-# 1. THE DATA
+# 1. THE DATA: Official Hike Data as of April 3, 2026
 fuel_impacts = {
     "Petrol": {"hike": 137.24, "current": 458.41},
     "Diesel": {"hike": 184.49, "current": 520.35}
@@ -15,6 +15,7 @@ categories = {
     "Pickup/4x4": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
+# 2. IMAGE MAPPING
 github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
 
 vehicle_images = {
@@ -36,7 +37,7 @@ vehicle_images = {
     "Land Cruiser": github_base + "Land%20Cruiser.png"
 }
 
-# 2. UI SETUP
+# 3. UI SETUP
 st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽", layout="centered")
 
 if 'show_report' not in st.session_state:
@@ -45,12 +46,10 @@ if 'show_report' not in st.session_state:
 def trigger_report():
     st.session_state.show_report = True
 
-current_date = datetime.now().strftime("%B %d, %Y")
-
-# 3. CSS FORCE FIELD - STRICT WEIGHT CONFORMANCE
+# 4. CSS FORCE FIELD: STRICT FONT WEIGHT CONFORMANCE
 st.markdown(f"""
     <style>
-    /* 1. THEME & FONT LOCK */
+    /* THEME LOCK */
     :root {{
         --primary-color: #FF4B4B;
         --background-color: #FFFFFF;
@@ -81,19 +80,14 @@ st.markdown(f"""
         font-weight: 500 !important;
         color: #1A1A1A !important;
     }}
+    h1 {{ letter-spacing: -1.2px !important; font-size: clamp(2rem, 8vw, 2.8rem) !important; }}
 
-    h1 {{ 
-        letter-spacing: -1.2px !important; 
-        font-size: clamp(2rem, 8vw, 2.8rem) !important; 
-    }}
-
-    /* --- WEIGHT 400: SUBTITLE, LABELS, CAPTIONS, METRIC LABELS --- */
+    /* --- WEIGHT 400: LABELS, CAPTIONS, BODY --- */
     p, span, label, [data-testid="stMetricLabel"], .stCaption, .subtitle, div[role="radiogroup"] label p {{
         font-family: 'NeueHaas', sans-serif !important;
         font-weight: 400 !important;
         color: #31333F !important;
     }}
-
     .subtitle {{
         font-size: clamp(1rem, 4vw, 1.15rem) !important;
         color: #555 !important;
@@ -101,19 +95,19 @@ st.markdown(f"""
         margin-bottom: 30px;
     }}
 
-    /* 4. BUTTON HARDENING - LET'S GO! */
+    /* BUTTON HARDENING */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: #FFFFFF !important;
-        border: none !important;
         border-radius: 8px !important;
         width: 100% !important;
-        padding: 0.6rem !important;
+        padding: 0.6rem 1rem !important;
         margin-top: 20px;
+        border: none !important;
     }}
     .stButton > button p {{ color: white !important; }}
 
-    /* 5. IMAGE & METRIC SCALING */
+    /* IMAGE & METRICS */
     [data-testid="stImage"] img {{
         max-width: 100% !important;
         height: auto !important;
@@ -122,70 +116,55 @@ st.markdown(f"""
         mix-blend-mode: multiply;
         background-color: white !important;
     }}
-
     [data-testid="stMetricValue"] {{ 
         font-size: clamp(2.2rem, 10vw, 42px) !important; 
         letter-spacing: -0.8px !important; 
     }}
 
-    /* Fix Dark Mode Radio/Select Visibility */
-    div[role="radiogroup"] label p {{ opacity: 1 !important; }}
-
     #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-# --- APP CONTENT ---
+# --- HEADER SECTION ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
-st.markdown(f"### {current_date}")
+st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
 # --- SEAMLESS AUTO-REVEAL FLOW ---
-# STEP 1: CATEGORY
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None)
 
 if cat_choice:
-    # STEP 2: MODEL
-    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose car...")
+    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose your car...")
     
     if model_choice:
         tank_size = categories[cat_choice][model_choice]
         st.image(vehicle_images.get(model_choice, github_base + "CD70.png"))
         
-        # STEP 3: FUEL
-        fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"], index=None, placeholder="Select fuel...")
+        fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"], index=None, placeholder="Select fuel type...")
         
         if fuel_choice:
-            # STEP 4: REFILLS
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2)
-            
-            # STEP 5: TANK SCALE
             tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2)
             
-            # THE ONLY BUTTON
             st.button("Let's Go!", on_click=trigger_report)
 
 # --- THE REPORT ---
 if st.session_state.show_report:
-    try:
-        refill_vol = 1 - (tank_scale / 10)
-        hike = fuel_impacts[fuel_choice]["hike"]
-        per_tank = (tank_size * refill_vol) * hike
-        monthly = per_tank * fills
+    refill_vol = 1 - (tank_scale / 10)
+    hike = fuel_impacts[fuel_choice]["hike"]
+    per_tank = (tank_size * refill_vol) * hike
+    monthly = per_tank * fills
 
-        st.divider()
-        st.subheader("Fuel Impact Report")
-        
-        c1, c2 = st.columns(2)
-        c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
-        c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
-        
-        st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
-        st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
-        st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
-        
-        if st.button("Start Again"):
-            st.session_state.show_report = False
-            st.rerun()
-    except NameError:
-        st.warning("Please complete all steps above first.")
+    st.divider()
+    st.subheader("Fuel Impact Report")
+    c1, c2 = st.columns(2)
+    c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
+    c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
+    
+    st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
+    st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
+    st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
+    
+    if st.button("Start Again"):
+        st.session_state.show_report = False
+        st.rerun()
