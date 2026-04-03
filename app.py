@@ -17,36 +17,11 @@ categories = {
 
 # 2. IMAGE MAPPING
 vehicle_images = {
-    "CD 70": "https://placehold.co/120x120",
-    "CG 125": "",
-    "GS 150": "",
-    "YBR 125": "",
-    "Suzuki Alto": "",
-    "Suzuki Cultus": "",
-    "Suzuki Wagon R": "",
-    "Suzuki Swift": "",
-    "Kia Picanto": "",
-    "Suzuki Mehran": "",
-    "Honda City": "",
-    "Toyota Yaris": "",
-    "Changan Alsvin": "",
-    "Honda Civic": "",
-    "Toyota Corolla": "",
-    "Hyundai Elantra": "",
-    "Proton Saga": "",
-    "Kia Sportage": "",
-    "Hyundai Tucson": "",
-    "Changan Oshan X7": "",
-    "MG HS": "",
-    "Haval H6": "",
-    "Haval Jolion": "",
-    "Kia Stonic": "",
-    "Cherry Tiggo 4 Pro": "",
-    "Toyota Hilux/Revo": "",
-    "Isuzu D-Max": "",
-    "JAC T8": "",
-    "Toyota Fortuner": "",
-    "Land Cruiser": ""
+    "CD 70": "", "CG 125": "", "GS 150": "", "YBR 125": "",
+    "Suzuki Alto": "", "Suzuki Cultus": "", "Suzuki Wagon R": "", "Suzuki Swift": "", "Kia Picanto": "", "Suzuki Mehran": "",
+    "Honda City": "", "Toyota Yaris": "", "Changan Alsvin": "", "Honda Civic": "", "Toyota Corolla": "", "Hyundai Elantra": "", "Proton Saga": "",
+    "Kia Sportage": "", "Hyundai Tucson": "", "Changan Oshan X7": "", "MG HS": "", "Haval H6": "", "Haval Jolion": "", "Kia Stonic": "", "Cherry Tiggo 4 Pro": "",
+    "Toyota Hilux/Revo": "", "Isuzu D-Max": "", "JAC T8": "", "Toyota Fortuner": "", "Land Cruiser": ""
 }
 
 # 3. UI SETUP & FONT INJECTION
@@ -80,14 +55,14 @@ st.markdown(f"""
         font-weight: 500 !important; 
     }}
 
-    /* IMAGE STYLING: Tiny, Square, Cute */
+    /* IMAGE STYLING: Doubled to 240px */
     [data-testid="stImage"] img {{
-        width: 120px !important;
-        height: 120px !important;
+        width: 240px !important;
+        height: 240px !important;
         object-fit: cover !important;
         border-radius: 12px !important;
-        margin-top: -10px;
-        margin-bottom: 20px;
+        margin-top: -5px;
+        margin-bottom: 25px;
     }}
 
     div[role="radiogroup"] label p {{ font-weight: 400 !important; }}
@@ -113,15 +88,14 @@ cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizo
 if st.session_state.step == 1:
     st.button("Continue", on_click=move_to_next)
 
-# STEP 2: MODEL & TINY SQUARE IMAGE
+# STEP 2: MODEL & 240px IMAGE
 if st.session_state.step >= 2:
     model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
     tank_size = categories[cat_choice][model_choice]
     
     img_url = vehicle_images.get(model_choice, "")
-    # Using a high-quality placeholder for any car that doesn't have a link yet
-    selected_img = img_url if img_url else "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=300&h=300"
-    st.image(selected_img, width=120)
+    selected_img = img_url if img_url else "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400&h=400"
+    st.image(selected_img, width=240)
     
     if st.session_state.step == 2:
         st.button("Continue", on_click=move_to_next)
