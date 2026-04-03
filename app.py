@@ -15,13 +15,45 @@ categories = {
     "Pickups/4x4s": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
-# 2. IMAGE MAPPING
+# 2. IMAGE MAPPING: Synced with your GitHub Filenames
+github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
+
 vehicle_images = {
-    "CD 70": "", "CG 125": "", "GS 150": "", "YBR 125": "",
-    "Suzuki Alto": "", "Suzuki Cultus": "", "Suzuki Wagon R": "", "Suzuki Swift": "", "Kia Picanto": "", "Suzuki Mehran": "",
-    "Honda City": "", "Toyota Yaris": "", "Changan Alsvin": "", "Honda Civic": "", "Toyota Corolla": "", "Hyundai Elantra": "", "Proton Saga": "",
-    "Kia Sportage": "", "Hyundai Tucson": "", "Changan Oshan X7": "", "MG HS": "", "Haval H6": "", "Haval Jolion": "", "Kia Stonic": "", "Cherry Tiggo 4 Pro": "",
-    "Toyota Hilux/Revo": "", "Isuzu D-Max": "", "JAC T8": "", "Toyota Fortuner": "", "Land Cruiser": ""
+    # Bikes
+    "CD 70": github_base + "CD70.png",
+    "CG 125": github_base + "CG%20125.png",
+    "GS 150": github_base + "GS%20150.png",
+    "YBR 125": github_base + "YBR%20125.png",
+    # Hatchbacks
+    "Suzuki Alto": github_base + "Alto.png",
+    "Suzuki Cultus": github_base + "Cultus.png",
+    "Suzuki Wagon R": github_base + "Wagon%20R.png",
+    "Suzuki Swift": github_base + "Swift.png",
+    "Kia Picanto": github_base + "Picanto.png",
+    "Suzuki Mehran": github_base + "Mehran.png",
+    # Sedans
+    "Honda City": github_base + "Honda%20City.png",
+    "Toyota Yaris": github_base + "Yaris.png",
+    "Changan Alsvin": github_base + "Alswin.png",
+    "Honda Civic": github_base + "Civic.png",
+    "Toyota Corolla": github_base + "Corolla.png",
+    "Hyundai Elantra": github_base + "Elantra.png",
+    "Proton Saga": github_base + "Proton%20Saga.png",
+    # SUVs/Crossovers
+    "Kia Sportage": github_base + "Sportage.png",
+    "Hyundai Tucson": github_base + "Tucson.png",
+    "Changan Oshan X7": github_base + "Oshan%20X7.png",
+    "MG HS": github_base + "MG%20HS.png",
+    "Haval H6": github_base + "Haval%20H6.png",
+    "Haval Jolion": github_base + "Haval%20Jolion.png",
+    "Kia Stonic": github_base + "Kia%20Stonic.png",
+    "Cherry Tiggo 4 Pro": github_base + "Cherry%20Tiggo%20Pro%204.png",
+    # Pickups/4x4s
+    "Toyota Hilux/Revo": github_base + "Revo.png",
+    "Isuzu D-Max": github_base + "ISUZU%20D-Max.png",
+    "JAC T8": github_base + "Jac%20T-8.png",
+    "Toyota Fortuner": github_base + "Fortuner.png",
+    "Land Cruiser": github_base + "Land%20Cruiser.png"
 }
 
 # 3. UI SETUP & FONT INJECTION
@@ -34,7 +66,6 @@ def move_to_next():
     st.session_state.step += 1
 
 current_date = datetime.now().strftime("%B %d, %Y")
-github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
 
 st.markdown(f"""
     <style>
@@ -55,7 +86,7 @@ st.markdown(f"""
         font-weight: 500 !important; 
     }}
 
-    /* IMAGE STYLING: Doubled to 240px */
+    /* IMAGE STYLING: 240px Square */
     [data-testid="stImage"] img {{
         width: 240px !important;
         height: 240px !important;
@@ -88,13 +119,12 @@ cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizo
 if st.session_state.step == 1:
     st.button("Continue", on_click=move_to_next)
 
-# STEP 2: MODEL & 240px IMAGE
+# STEP 2: MODEL & IMAGE
 if st.session_state.step >= 2:
     model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
     tank_size = categories[cat_choice][model_choice]
     
-    img_url = vehicle_images.get(model_choice, "")
-    selected_img = img_url if img_url else "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400&h=400"
+    selected_img = vehicle_images.get(model_choice, "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400&h=400")
     st.image(selected_img, width=240)
     
     if st.session_state.step == 2:
