@@ -8,11 +8,11 @@ fuel_impacts = {
 }
 
 categories = {
-    "Bike": {"CD 70": 9, "CG 125": 12, "GS 150": 12, "YBR 125": 13},
-    "Hatchback": {"Suzuki Alto": 27, "Suzuki Cultus": 35, "Suzuki Wagon R": 35, "Suzuki Swift": 37, "Kia Picanto": 35, "Suzuki Mehran": 30},
-    "Sedan": {"Honda City": 40, "Toyota Yaris": 42, "Changan Alsvin": 40, "Honda Civic": 47, "Toyota Corolla": 55, "Hyundai Elantra": 50, "Proton Saga": 40},
-    "SUVs/Crossover": {"Kia Sportage": 62, "Hyundai Tucson": 62, "Changan Oshan X7": 55, "MG HS": 55, "Haval H6": 58, "Haval Jolion": 55, "Kia Stonic": 45, "Cherry Tiggo 4 Pro": 51},
-    "Pickups/4x4": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
+    "Bikes": {"CD 70": 9, "CG 125": 12, "GS 150": 12, "YBR 125": 13},
+    "Hatchbacks": {"Suzuki Alto": 27, "Suzuki Cultus": 35, "Suzuki Wagon R": 35, "Suzuki Swift": 37, "Kia Picanto": 35, "Suzuki Mehran": 30},
+    "Sedans": {"Honda City": 40, "Toyota Yaris": 42, "Changan Alsvin": 40, "Honda Civic": 47, "Toyota Corolla": 55, "Hyundai Elantra": 50, "Proton Saga": 40},
+    "SUVs/Crossovers": {"Kia Sportage": 62, "Hyundai Tucson": 62, "Changan Oshan X7": 55, "MG HS": 55, "Haval H6": 58, "Haval Jolion": 55, "Kia Stonic": 45, "Cherry Tiggo 4 Pro": 51},
+    "Pickups/4x4s": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
 # 2. IMAGE MAPPING: Synced with your GitHub Filenames
@@ -75,10 +75,20 @@ st.markdown(f"""
         font-weight: 500;
     }}
 
+    /* Global Font Override - Medium 500 */
     html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
         text-transform: none !important;
         font-weight: 500 !important; 
+    }}
+
+    /* New Subtitle styling - Roman 400 */
+    .subtitle {{
+        font-weight: 400 !important;
+        font-size: 1.15rem;
+        color: #555;
+        margin-top: -20px;
+        margin-bottom: 30px;
     }}
 
     /* IMAGE STYLING */
@@ -100,8 +110,7 @@ st.markdown(f"""
     .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
     label, div[role="radiogroup"] label {{ font-size: 1rem !important; font-weight: 400 !important; }}
     .stCaption {{ color: #888; font-weight: 400 !important; }}
-
-    /* NEW: Footer Styling */
+    
     .custom-footer {{
         font-family: 'NeueHaas' !important;
         font-weight: 400 !important;
@@ -117,6 +126,8 @@ st.markdown(f"""
 # --- HEADER SECTION ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {current_date}")
+# NEW SUBTITLE
+st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
 # --- PROGRESSIVE FLOW ---
 
@@ -169,5 +180,4 @@ if st.session_state.step >= 6:
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
     st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
     
-    # NEW: Classy Footer
     st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
