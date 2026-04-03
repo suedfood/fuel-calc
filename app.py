@@ -39,16 +39,16 @@ vehicle_images = {
 # 2. UI SETUP
 st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽", layout="centered")
 
-if 'step' not in st.session_state:
-    st.session_state.step = 1
+# Initialize State for the Final Reveal
+if 'show_report' not in st.session_state:
+    st.session_state.show_report = False
 
-def move_to_next():
-    st.session_state.step += 1
+def trigger_report():
+    st.session_state.show_report = True
 
 # 3. THE CSS FORCE FIELD
 st.markdown(f"""
     <style>
-    /* 1. HIJACK THEME VARIABLES */
     :root {{
         --primary-color: #FF4B4B;
         --background-color: #FFFFFF;
@@ -56,7 +56,6 @@ st.markdown(f"""
         --text-color: #31333F;
     }}
 
-    /* 2. FONT INJECTION */
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
@@ -68,20 +67,26 @@ st.markdown(f"""
         font-weight: 500; font-display: swap;
     }}
 
-    /* 3. HARD COLOR OVERRIDES */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
         background-color: #FFFFFF !important;
         color: #31333F !important;
     }}
 
-    /* Force all typography */
-    p, span, label, li, h1, h2, h3, [data-testid="stMetricLabel"], [data-testid="stMetricValue"] {{
+    p, span, label, li, .stMarkdown, [data-testid="stMetricLabel"] {{
         color: #31333F !important;
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
+        font-weight: 400 !important;
         text-transform: none !important;
     }}
 
-    h1 {{ font-size: clamp(1.8rem, 5vw, 2.8rem) !important; letter-spacing: -1.2px; font-weight: 500 !important; }}
+    h1, h2, h3, [data-testid="stMetricValue"] {{
+        color: #1A1A1A !important;
+        font-family: 'NeueHaas', -apple-system, sans-serif !important;
+        font-weight: 500 !important;
+        text-transform: none !important;
+    }}
+
+    h1 {{ font-size: clamp(1.8rem, 5vw, 2.8rem) !important; letter-spacing: -1.2px; }}
     
     .subtitle {{
         font-weight: 400 !important;
@@ -91,7 +96,7 @@ st.markdown(f"""
         margin-bottom: 30px;
     }}
 
-    /* 4. BUTTON HARDENING (High Contrast) */
+    /* BUTTON HARDENING - LET'S GO! */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: #FFFFFF !important;
@@ -102,23 +107,13 @@ st.markdown(f"""
         font-family: 'NeueHaas', sans-serif !important;
         font-weight: 500 !important;
         opacity: 1 !important;
+        margin-top: 20px;
     }}
 
-    .stButton > button:hover {{
-        background-color: #444444 !important;
-        border-color: #444444 !important;
-    }}
+    .stButton > button:hover {{ background-color: #444444 !important; border-color: #444444 !important; }}
+    .stButton > button p {{ color: #FFFFFF !important; font-weight: 500 !important; }}
 
-    /* Ensure button text doesn't invert */
-    .stButton > button p, .stButton > button div {{
-        color: #FFFFFF !important;
-    }}
-
-    /* 5. INPUT & RADIO FIXES */
-    div[role="radiogroup"] label p {{
-        color: #31333F !important;
-        opacity: 1 !important;
-    }}
+    div[role="radiogroup"] label p {{ color: #31333F !important; opacity: 1 !important; }}
 
     [data-testid="stImage"] img {{
         max-width: 100% !important;
@@ -141,58 +136,59 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# --- APP CONTENT ---
+# --- HEADER SECTION ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
-# STEP 1
-cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
-if st.session_state.step == 1:
-    st.button("Continue", on_click=move_to_next)
+# --- AUTO-PROGRESSIVE FLOW ---
 
-# STEP 2
-if st.session_state.step >= 2:
-    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
-    tank_size = categories[cat_choice][model_choice]
+# 1. CATEGORY
+cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None)
+
+if cat_choice:
+    # 2. MODEL
+    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose your car...")
     
-    img_url = vehicle_images.get(model_choice, github_base + "CD70.png")
-    st.image(img_url)
-    
-    if st.session_state.step == 2:
-        st.button("Continue", on_click=move_to_next)
+    if model_choice:
+        tank_size = categories[cat_choice][model_choice]
+        img_url = vehicle_images.get(model_choice, github_base + "CD70.png")
+        st.image(img_url)
+        
+        # 3. FUEL
+        fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"], index=None, placeholder="Select fuel type...")
+        
+        if fuel_choice:
+            # 4. FREQUENCY
+            fills = st.slider("How many times do you refuel each month?", 1, 10, 2)
+            
+            # 5. SCALE
+            tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", 1, 10, 2)
+            
+            # THE ONLY BUTTON
+            st.button("Let's Go!", on_click=trigger_report)
 
-# STEP 3
-if st.session_state.step >= 3:
-    fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"])
-    if st.session_state.step == 3:
-        st.button("Continue", on_click=move_to_next)
+# --- THE REPORT ---
+if st.session_state.show_report:
+    # Double check choices are still there to avoid calculation errors
+    try:
+        refill_vol = 1 - (tank_scale / 10)
+        hike = fuel_impacts[fuel_choice]["hike"]
+        per_tank = (tank_size * refill_vol) * hike
+        monthly = per_tank * fills
 
-# STEP 4
-if st.session_state.step >= 4:
-    fills = st.slider("How many times do you refuel each month?", 1, 10, 2)
-    if st.session_state.step == 4:
-        st.button("Continue", on_click=move_to_next)
-
-# STEP 5
-if st.session_state.step >= 5:
-    tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", 1, 10, 2)
-    if st.session_state.step == 5:
-        st.button("Show Final Report", on_click=move_to_next)
-
-# THE REPORT
-if st.session_state.step >= 6:
-    refill_vol = 1 - (tank_scale / 10)
-    hike = fuel_impacts[fuel_choice]["hike"]
-    per_tank = (tank_size * refill_vol) * hike
-    monthly = per_tank * fills
-
-    st.divider()
-    st.subheader("Fuel Impact Report")
-    c1, c2 = st.columns(2)
-    c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
-    c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
-    
-    st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
-    st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
-    st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
+        st.divider()
+        st.subheader("Fuel Impact Report")
+        c1, c2 = st.columns(2)
+        c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
+        c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
+        
+        st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
+        st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
+        st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
+        
+        if st.button("Start Again"):
+            st.session_state.show_report = False
+            st.rerun()
+    except NameError:
+        st.warning("Please complete all steps above first.")
