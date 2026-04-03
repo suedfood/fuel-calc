@@ -46,8 +46,8 @@ st.markdown(f"""
     }}
 
     /* ANCHOR POINTS - Medium (500) */
-    /* Title, Metric Value, Subheaders, and Alert */
-    h1, h3, [data-testid="stMetricValue"], .stAlert p {{
+    /* Title, Metric Value, Subheaders, Date, and Alert */
+    h1, h3, [data-testid="stMetricValue"], .stAlert p, .date-subheader {{
         font-weight: 500 !important;
         color: #1A1A1A;
     }}
@@ -58,7 +58,16 @@ st.markdown(f"""
         font-size: 2.8rem !important;
     }}
 
-    /* Subheader (Fuel Impact Report) - Restored to Medium */
+    /* Date Subheader - Restored to Medium */
+    .date-subheader {{
+        font-family: 'NeueHaas' !important;
+        font-size: 1.2rem;
+        color: #444;
+        margin-bottom: 2rem;
+        letter-spacing: -0.3px;
+    }}
+
+    /* Fuel Impact Report Header */
     h3 {{
         letter-spacing: -0.5px;
         font-size: 1.5rem !important;
@@ -71,7 +80,7 @@ st.markdown(f"""
     }}
 
     /* INSTRUCTIONAL TEXT - Roman (400) */
-    /* Labels, Radio Labels, and Captions */
+    /* Labels, Radio Labels, Metric Labels, and Captions */
     label, div[role="radiogroup"] label, [data-testid="stMetricLabel"], .stCaption {{
         font-weight: 400 !important;
     }}
@@ -85,15 +94,6 @@ st.markdown(f"""
     label, div[role="radiogroup"] label {{
         font-size: 1rem !important;
         color: #333;
-    }}
-
-    /* Dynamic Date (Roman 400 for a lighter touch below the Title) */
-    .date-subheader {{
-        font-family: 'NeueHaas' !important;
-        font-weight: 400 !important;
-        font-size: 1.2rem;
-        color: #444;
-        margin-bottom: 2rem;
     }}
 
     /* Alert Box Polish */
@@ -112,6 +112,7 @@ st.markdown(f"""
 
 # --- HEADER SECTION ---
 st.title("⛽ Pakistan Fuel Hike Impact")
+# Date is now Medium (500)
 st.markdown(f'<p class="date-subheader">{current_date}</p>', unsafe_allow_html=True)
 
 # --- SELECTION FLOW ---
