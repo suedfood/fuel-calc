@@ -65,6 +65,13 @@ current_date = datetime.now().strftime("%B %d, %Y")
 
 st.markdown(f"""
     <style>
+    /* 1. DARK MODE KILLER: Forces light background and dark text */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
+        background-color: white !important;
+        color: #31333F !important;
+    }}
+
+    /* 2. FONT LOADING */
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
@@ -90,6 +97,7 @@ st.markdown(f"""
         margin-bottom: 30px;
     }}
 
+    /* 3. IMAGE BLENDING: Merges white PNG backgrounds with the page */
     [data-testid="stImage"] img {{
         width: 240px !important;
         height: 240px !important;
@@ -97,6 +105,8 @@ st.markdown(f"""
         border-radius: 12px !important;
         margin-top: -5px;
         margin-bottom: 25px;
+        background-color: white !important;
+        mix-blend-mode: multiply;
     }}
 
     div[role="radiogroup"] label p {{ font-weight: 400 !important; }}
