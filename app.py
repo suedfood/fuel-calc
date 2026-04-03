@@ -46,7 +46,6 @@ def move_to_next():
     st.session_state.step += 1
 
 # 3. THE CSS FORCE FIELD
-# This targets Streamlit's base variables and forces them to Light Mode
 st.markdown(f"""
     <style>
     /* 1. HIJACK THEME VARIABLES */
@@ -55,7 +54,6 @@ st.markdown(f"""
         --background-color: #FFFFFF;
         --secondary-background-color: #F0F2F6;
         --text-color: #31333F;
-        --font: "NeueHaas", -apple-system, sans-serif;
     }}
 
     /* 2. FONT INJECTION */
@@ -70,25 +68,21 @@ st.markdown(f"""
         font-weight: 500; font-display: swap;
     }}
 
-    /* 3. HARD COLOR OVERRIDES for Dark Mode Browsers */
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], [data-testid="stToolbar"] {{
+    /* 3. HARD COLOR OVERRIDES */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
         background-color: #FFFFFF !important;
         color: #31333F !important;
     }}
 
-    /* Force all text elements to dark gray */
-    p, span, label, li, h1, h2, h3, h4, h5, h6, .stMarkdown, [data-testid="stMetricLabel"], [data-testid="stMetricValue"] {{
+    /* Force all typography */
+    p, span, label, li, h1, h2, h3, [data-testid="stMetricLabel"], [data-testid="stMetricValue"] {{
         color: #31333F !important;
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
+        text-transform: none !important;
     }}
 
-    /* Specific fix for Radio Button Labels (The glitch in your screenshot) */
-    div[role="radiogroup"] label p {{
-        color: #31333F !important;
-        opacity: 1 !important;
-    }}
-
-    /* Subtitle Styling */
+    h1 {{ font-size: clamp(1.8rem, 5vw, 2.8rem) !important; letter-spacing: -1.2px; font-weight: 500 !important; }}
+    
     .subtitle {{
         font-weight: 400 !important;
         font-size: clamp(1rem, 4vw, 1.15rem);
@@ -97,7 +91,35 @@ st.markdown(f"""
         margin-bottom: 30px;
     }}
 
-    /* Image responsive blending */
+    /* 4. BUTTON HARDENING (High Contrast) */
+    .stButton > button {{
+        background-color: #1A1A1A !important;
+        color: #FFFFFF !important;
+        border: 1px solid #1A1A1A !important;
+        border-radius: 8px !important;
+        padding: 0.5rem 1rem !important;
+        width: 100% !important;
+        font-family: 'NeueHaas', sans-serif !important;
+        font-weight: 500 !important;
+        opacity: 1 !important;
+    }}
+
+    .stButton > button:hover {{
+        background-color: #444444 !important;
+        border-color: #444444 !important;
+    }}
+
+    /* Ensure button text doesn't invert */
+    .stButton > button p, .stButton > button div {{
+        color: #FFFFFF !important;
+    }}
+
+    /* 5. INPUT & RADIO FIXES */
+    div[role="radiogroup"] label p {{
+        color: #31333F !important;
+        opacity: 1 !important;
+    }}
+
     [data-testid="stImage"] img {{
         max-width: 100% !important;
         height: auto !important;
@@ -107,25 +129,14 @@ st.markdown(f"""
         background-color: white !important;
     }}
 
-    /* Slider & Button Parity */
-    .stSlider {{ padding-top: 10px; }}
-    .stButton>button {{ width: 100%; border-radius: 8px; }}
-
-    /* Report Elements */
     [data-testid="stMetricValue"] {{ font-size: clamp(2rem, 8vw, 42px) !important; letter-spacing: -0.8px; }}
     
-    /* Footer */
     .custom-footer {{
-        font-family: 'NeueHaas' !important;
-        font-weight: 400 !important;
-        font-size: 0.85rem;
-        color: #AAA !important;
-        margin-top: 4rem;
-        padding-top: 1rem;
-        border-top: 1px solid #EEE;
+        font-family: 'NeueHaas' !important; font-weight: 400 !important;
+        font-size: 0.85rem; color: #AAA !important;
+        margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #EEE;
     }}
 
-    /* Hide the Streamlit clutter */
     #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
@@ -135,7 +146,6 @@ st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
-# PROGRESSIVE FLOW
 # STEP 1
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
 if st.session_state.step == 1:
