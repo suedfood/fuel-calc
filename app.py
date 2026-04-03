@@ -14,21 +14,38 @@ categories = {
     "Pickups/4x4s": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
-# 2. UI SETUP
+# 2. UI SETUP & FONT INJECTION
 st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽")
 
-st.title("⛽ Pakistan Fuel Impact Analysis")
-st.markdown("### April 3, 2026 War-Time Price Re-basing")
+# Injecting Neue Haas Grotesk / Helvetica Neue
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+    
+    html, body, [class*="st-"] {
+        font-family: "Neue Haas Grotesk", "Helvetica Neue", "Helvetica", "Inter", sans-serif;
+    }
+    
+    /* Make the metrics look more punchy */
+    [data-testid="stMetricValue"] {
+        font-size: 30px;
+        font-weight: 700;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+st.title("⛽ Pakistan Wartime Fuel Hike Impact")
+st.markdown("### April 3, 2026")
 
 # STEP 1: CATEGORY (Horizontal Radio)
 cat_choice = st.radio("Select Vehicle Category", list(categories.keys()), horizontal=True)
 
 # STEP 2: MODEL (Dropdown)
-model_choice = st.selectbox(f"Which {cat_choice} do you drive?", list(categories[cat_choice].keys()))
+model_choice = st.selectbox(f"Which vehicle do you drive?", list(categories[cat_choice].keys()))
 tank_size = categories[cat_choice][model_choice]
 
-# AESTHETIC TOUCH: Placeholder for your halftone photo
-# You can replace this URL with your actual halftone designs
+# HALFTONE IMAGE PLACEHOLDER
+# To make this real, you'd upload your halftones to a site like Imgur and paste the links here
 st.image("https://via.placeholder.com/600x200.png?text=Halftone+Vehicle+Graphic", use_column_width=True)
 
 # STEP 3: FUEL & USAGE
@@ -36,7 +53,6 @@ col1, col2 = st.columns(2)
 with col1:
     fuel_choice = st.selectbox("Fuel Type", ["Petrol", "Diesel"])
 with col2:
-    # Cute slider with 0.5 increments
     fills = st.slider("Fills per month", min_value=0.5, max_value=12.0, value=2.0, step=0.5)
 
 # 3. THE CALCULATION
@@ -52,6 +68,7 @@ c1, c2 = st.columns(2)
 c1.metric("Additional Cost / Tank", f"Rs. {per_tank:,.0f}")
 c2.metric("Total Additional Monthly Cost", f"Rs. {monthly_total:,.0f}")
 
+# Fixed your wording here
 st.error(f"**TO CONTINUE BUSINESS AS USUAL, YOU'LL HAVE TO PAY AN ADDITIONAL RS. {monthly_total:,.0f} PER MONTH**")
 
 st.caption("Data reflects the April 3rd official price re-basing compared to Ramadan 2026.")
