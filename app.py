@@ -15,29 +15,75 @@ categories = {
     "Pickups/4x4s": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
-# 2. UI SETUP & FONT INJECTION
+# 2. UI SETUP & MULTI-WEIGHT FONT INJECTION
 st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽")
 
-# Dynamic Date fetching
+# Dynamic Date
 current_date = datetime.now().strftime("%B %d, %Y")
 
-st.markdown("""
+# GitHub Raw Base URL
+github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
+
+st.markdown(f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
-    
-    html, body, [class*="st-"] {
-        font-family: "Neue Haas Grotesk", "Helvetica Neue", "Helvetica", "Inter", sans-serif;
-    }
-    
-    [data-testid="stMetricValue"] {
-        font-size: 30px;
+    /* 400 - Roman */
+    @font-face {{
+        font-family: 'NeueHaas';
+        src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
+        font-weight: 400;
+    }}
+    /* 500 - Medium (Note: using the 'Mediu' filename from your upload) */
+    @font-face {{
+        font-family: 'NeueHaas';
+        src: url('{github_base}NeueHaasDisplayMediu.ttf') format('truetype');
+        font-weight: 500;
+    }}
+    /* 700 - Bold */
+    @font-face {{
+        font-family: 'NeueHaas';
+        src: url('{github_base}NeueHaasDisplayBold.ttf') format('truetype');
         font-weight: 700;
-    }
+    }}
+    /* 900 - Black */
+    @font-face {{
+        font-family: 'NeueHaas';
+        src: url('{github_base}NeueHaasDisplayBlack.ttf') format('truetype');
+        font-weight: 900;
+    }}
+
+    html, body, [class*="st-"] {{
+        font-family: 'NeueHaas', sans-serif;
+    }}
+
+    /* Title Styling (Black weight for maximum impact) */
+    h1 {{
+        font-weight: 900 !important;
+        letter-spacing: -1.5px;
+        text-transform: uppercase;
+    }}
+
+    h3 {{
+        font-weight: 400 !important;
+        color: #666;
+    }}
+
+    /* Metric Values (Bold) */
+    [data-testid="stMetricValue"] {{
+        font-weight: 700;
+        font-size: 42px !important;
+    }}
+
+    /* Metric Labels (Medium & Uppercase) */
+    [data-testid="stMetricLabel"] {{
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 14px !important;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
 st.title("⛽ Pakistan Fuel Hike Impact")
-# Using an f-string to make the date dynamic
 st.markdown(f"### {current_date}")
 
 # STEP 1: CATEGORY (Horizontal Radio)
@@ -48,7 +94,8 @@ model_choice = st.selectbox(f"Which vehicle do you drive?", list(categories[cat_
 tank_size = categories[cat_choice][model_choice]
 
 # HALFTONE IMAGE PLACEHOLDER
-st.image("https://via.placeholder.com/600x200.png?text=Halftone+Vehicle+Graphic", use_column_width=True)
+# Next step: I can show you how to map specific images to cat_choice
+st.image("https://via.placeholder.com/600x250.png?text=Halftone+Vehicle+Graphic", use_column_width=True)
 
 # STEP 3: FUEL & USAGE
 col1, col2 = st.columns(2)
@@ -72,4 +119,4 @@ c2.metric("Total Additional Monthly Cost", f"Rs. {monthly_total:,.0f}")
 
 st.error(f"**To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month**")
 
-st.caption("Data reflects the April 3rd official price re-basing compared to Ramadan 2026.")
+st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
