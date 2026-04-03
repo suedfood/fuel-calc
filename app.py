@@ -7,7 +7,6 @@ fuel_impacts = {
     "Diesel": {"hike": 184.49, "current": 520.35}
 }
 
-# UPDATED TO SINGULAR
 categories = {
     "Bike": {"CD 70": 9, "CG 125": 12, "GS 150": 12, "YBR 125": 13},
     "Hatchback": {"Suzuki Alto": 27, "Suzuki Cultus": 35, "Suzuki Wagon R": 35, "Suzuki Swift": 37, "Kia Picanto": 35, "Suzuki Mehran": 30},
@@ -53,7 +52,7 @@ vehicle_images = {
 }
 
 # 3. UI SETUP & FONT INJECTION
-st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽")
+st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽", layout="centered")
 
 if 'step' not in st.session_state:
     st.session_state.step = 1
@@ -69,39 +68,38 @@ st.markdown(f"""
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
         font-weight: 400;
+        font-display: swap;
     }}
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayMediu.ttf') format('truetype');
         font-weight: 500;
+        font-display: swap;
     }}
 
+    /* Global Font Override - Medium 500 */
     html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
         text-transform: none !important;
         font-weight: 500 !important; 
     }}
 
-    .subtitle {{
-        font-weight: 400 !important;
-        font-size: 1.15rem;
-        color: #555;
-        margin-top: -20px;
-        margin-bottom: 30px;
+    /* DESKTOP STYLING (The standard you locked in) */
+    h1 {{ letter-spacing: -1.2px; font-size: 2.8rem !important; color: #1A1A1A; }}
+    .subtitle {{ font-weight: 400 !important; font-size: 1.15rem; color: #555; margin-top: -20px; margin-bottom: 30px; }}
+    [data-testid="stImage"] img {{ width: 240px !important; height: 240px !important; object-fit: cover !important; border-radius: 12px !important; margin-top: -5px; margin-bottom: 25px; }}
+
+    /* MOBILE OPTIMIZATION (Overrides for phones) */
+    @media (max-width: 640px) {{
+        h1 {{ font-size: 1.8rem !important; letter-spacing: -0.8px !important; }}
+        .subtitle {{ font-size: 1.0rem !important; margin-top: -10px !important; }}
+        [data-testid="stImage"] img {{ width: 180px !important; height: 180px !important; }}
+        [data-testid="stMetricValue"] {{ font-size: 32px !important; }}
     }}
 
-    [data-testid="stImage"] img {{
-        width: 240px !important;
-        height: 240px !important;
-        object-fit: cover !important;
-        border-radius: 12px !important;
-        margin-top: -5px;
-        margin-bottom: 25px;
-    }}
-
+    /* SHARED STYLES */
     div[role="radiogroup"] label p {{ font-weight: 400 !important; }}
     div[data-baseweb="select"] div {{ font-weight: 400 !important; }}
-    h1 {{ letter-spacing: -1.2px; font-size: 2.8rem !important; color: #1A1A1A; }}
     h3 {{ letter-spacing: -0.5px; color: #444; }}
     [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A; }}
     [data-testid="stMetricLabel"] {{ letter-spacing: 0px; font-size: 15px !important; color: #555; font-weight: 400 !important; }}
@@ -128,7 +126,7 @@ st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel e
 
 # --- PROGRESSIVE FLOW ---
 
-# STEP 1: CATEGORY (SINGULAR)
+# STEP 1: CATEGORY
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
 if st.session_state.step == 1:
     st.button("Continue", on_click=move_to_next)
