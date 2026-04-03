@@ -82,7 +82,6 @@ st.markdown(f"""
         font-weight: 500 !important; 
     }}
 
-    /* New Subtitle styling - Roman 400 */
     .subtitle {{
         font-weight: 400 !important;
         font-size: 1.15rem;
@@ -126,7 +125,6 @@ st.markdown(f"""
 # --- HEADER SECTION ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {current_date}")
-# NEW SUBTITLE
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
 # --- PROGRESSIVE FLOW ---
@@ -153,9 +151,9 @@ if st.session_state.step >= 3:
     if st.session_state.step == 3:
         st.button("Continue", on_click=move_to_next)
 
-# STEP 4: REFUEL FREQUENCY
+# STEP 4: REFUEL FREQUENCY (Updated to Whole Numbers)
 if st.session_state.step >= 4:
-    fills = st.slider("How many times do you refuel each month?", min_value=0.5, max_value=12.0, value=2.0, step=0.5)
+    fills = st.slider("How many times do you refuel each month?", min_value=1, max_value=10, value=2, step=1)
     if st.session_state.step == 4:
         st.button("Continue", on_click=move_to_next)
 
