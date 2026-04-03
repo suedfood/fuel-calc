@@ -163,7 +163,7 @@ if st.session_state.step >= 4:
 
 # STEP 5: TANK FULLNESS
 if st.session_state.step >= 5:
-    tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", min_value=1, max_value=10, value=2, step=1)
+    tank_scale = st.slider("On average, how full is your tank when you refuel?", min_value=1, max_value=10, value=2, step=1)
     if st.session_state.step == 5:
         st.button("Show Final Report", on_click=move_to_next)
 
