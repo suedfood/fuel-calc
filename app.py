@@ -26,12 +26,6 @@ github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
 
 st.markdown(f"""
     <style>
-    /* 400 - Roman */
-    @font-face {{
-        font-family: 'NeueHaas';
-        src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
-        font-weight: 400;
-    }}
     /* 500 - Medium (Matching your 'Mediu' filename) */
     @font-face {{
         font-family: 'NeueHaas';
@@ -39,59 +33,53 @@ st.markdown(f"""
         font-weight: 500;
     }}
 
-    /* Global Font Override - Strictly Neue Haas */
+    /* Global Font Override - Strictly Neue Haas Medium */
     html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
         text-transform: none !important;
+        font-weight: 500 !important; /* Unified sturdy weight */
     }}
 
     /* Title Styling (Medium 500, Title Case) */
     h1 {{
-        font-weight: 500 !important;
         letter-spacing: -1.2px;
         font-size: 2.8rem !important;
         color: #1A1A1A;
     }}
 
-    /* Dynamic Date & Subheaders (Medium 500 for sturdiness) */
+    /* Dynamic Date & Subheaders */
     h3 {{
-        font-weight: 500 !important;
         letter-spacing: -0.5px;
         color: #444;
     }}
 
     /* The Numbers (Medium 500) */
     [data-testid="stMetricValue"] {{
-        font-weight: 500;
         font-size: 42px !important;
         letter-spacing: -0.8px;
         color: #1A1A1A;
     }}
 
-    /* Metric Labels (Medium 500 - Now one weight heavier) */
+    /* Metric Labels */
     [data-testid="stMetricLabel"] {{
-        font-weight: 500;
         letter-spacing: 0px;
         font-size: 15px !important;
         color: #555;
     }}
     
-    /* The Final Message Box - Reduced to Roman 400 for balance */
+    /* The Final Message Box - Returning to Medium 500 as requested */
     .stAlert p {{
-        font-weight: 400 !important;
         font-size: 1.15rem;
         line-height: 1.5;
     }}
 
-    /* Input Labels and Radio Labels (Medium 500) */
+    /* Input Labels and Radio Labels */
     label, div[role="radiogroup"] label {{
-        font-weight: 500 !important;
         font-size: 1rem !important;
     }}
 
-    /* Captions (Medium 500) */
+    /* Captions */
     .stCaption {{
-        font-weight: 500 !important;
         color: #888;
     }}
     </style>
@@ -129,7 +117,7 @@ c1, c2 = st.columns(2)
 c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
 c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
 
-# Final Bottom Line Message (Roman Weight 400 as requested)
+# Final Bottom Line Message (Reverted to Medium 500)
 st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
 
 st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
