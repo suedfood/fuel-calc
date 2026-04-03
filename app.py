@@ -1,4 +1,5 @@
 import streamlit as st
+from datetime import datetime
 
 # 1. THE DATA (April 3, 2026)
 fuel_impacts = {
@@ -17,7 +18,9 @@ categories = {
 # 2. UI SETUP & FONT INJECTION
 st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽")
 
-# Injecting Neue Haas Grotesk / Helvetica Neue
+# Dynamic Date fetching
+current_date = datetime.now().strftime("%B %d, %Y")
+
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
@@ -26,7 +29,6 @@ st.markdown("""
         font-family: "Neue Haas Grotesk", "Helvetica Neue", "Helvetica", "Inter", sans-serif;
     }
     
-    /* Make the metrics look more punchy */
     [data-testid="stMetricValue"] {
         font-size: 30px;
         font-weight: 700;
@@ -35,7 +37,8 @@ st.markdown("""
     """, unsafe_allow_html=True)
 
 st.title("⛽ Pakistan Fuel Hike Impact")
-st.markdown("### April 3, 2026")
+# Using an f-string to make the date dynamic
+st.markdown(f"### {current_date}")
 
 # STEP 1: CATEGORY (Horizontal Radio)
 cat_choice = st.radio("Select Vehicle Category", list(categories.keys()), horizontal=True)
@@ -45,7 +48,6 @@ model_choice = st.selectbox(f"Which vehicle do you drive?", list(categories[cat_
 tank_size = categories[cat_choice][model_choice]
 
 # HALFTONE IMAGE PLACEHOLDER
-# To make this real, you'd upload your halftones to a site like Imgur and paste the links here
 st.image("https://via.placeholder.com/600x200.png?text=Halftone+Vehicle+Graphic", use_column_width=True)
 
 # STEP 3: FUEL & USAGE
@@ -68,7 +70,6 @@ c1, c2 = st.columns(2)
 c1.metric("Additional Cost / Tank", f"Rs. {per_tank:,.0f}")
 c2.metric("Total Additional Monthly Cost", f"Rs. {monthly_total:,.0f}")
 
-# Fixed your wording here
 st.error(f"**To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month**")
 
 st.caption("Data reflects the April 3rd official price re-basing compared to Ramadan 2026.")
