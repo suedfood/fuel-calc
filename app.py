@@ -34,7 +34,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⛽ Pakistan Wartime Fuel Hike Impact")
+st.title("⛽ Pakistan Fuel Hike Impact")
 st.markdown("### April 3, 2026")
 
 # STEP 1: CATEGORY (Horizontal Radio)
