@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 
-# 1. THE DATA (April 3, 2026)
+# 1. THE DATA: Official Hike Data as of April 3, 2026
 fuel_impacts = {
     "Petrol": {"hike": 137.24, "current": 458.41},
     "Diesel": {"hike": 184.49, "current": 520.35}
@@ -15,7 +15,7 @@ categories = {
     "Pickups/4x4s": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
-# 2. UI SETUP & REFINED FONT INJECTION
+# 2. UI SETUP & FONT INJECTION
 st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽")
 
 # Dynamic Date formatting
@@ -38,78 +38,73 @@ st.markdown(f"""
         src: url('{github_base}NeueHaasDisplayMediu.ttf') format('truetype');
         font-weight: 500;
     }}
-    /* 700 - Bold */
-    @font-face {{
-        font-family: 'NeueHaas';
-        src: url('{github_base}NeueHaasDisplayBold.ttf') format('truetype');
-        font-weight: 700;
-    }}
 
-    /* Apply font globally with higher specificity */
-    html, body, [class*="st-"], div, span, p {{
+    /* Global Font Override - Strictly Neue Haas */
+    html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
     }}
 
-    /* Title Styling (Title Case, Bold 700) */
+    /* Title Styling (Reduced to Medium 500, Title Case) */
     h1 {{
-        font-weight: 700 !important;
+        font-weight: 500 !important;
         letter-spacing: -1.2px;
-        text-transform: none !important; /* Forces Title Case if typed that way */
+        text-transform: none !important;
         font-size: 2.8rem !important;
+        color: #1A1A1A;
     }}
 
-    /* Date and Subheaders (Roman 400) */
+    /* Dynamic Date & Subheaders (Roman 400) */
     h3 {{
         font-weight: 400 !important;
         letter-spacing: -0.5px;
-        color: #333;
+        color: #444;
     }}
 
-    /* Metrics Value (Bold 700) */
+    /* The Numbers (Reduced to Medium 500) */
     [data-testid="stMetricValue"] {{
-        font-weight: 700;
-        font-size: 40px !important;
+        font-weight: 500;
+        font-size: 42px !important;
         letter-spacing: -0.8px;
+        color: #1A1A1A;
     }}
 
-    /* Metrics Labels (Medium 500, Title Case) */
+    /* Metric Labels (Roman 400 to contrast with Medium numbers) */
     [data-testid="stMetricLabel"] {{
-        font-weight: 500;
+        font-weight: 400;
         text-transform: none !important;
         letter-spacing: 0px;
         font-size: 15px !important;
-        color: #555;
+        color: #666;
     }}
     
-    /* The Final Message Box - Reducing weight from 700 to 500 */
+    /* The Final Message Box (Medium 500) */
     .stAlert p {{
         font-weight: 500 !important;
-        font-size: 1.1rem;
-        line-height: 1.4;
+        font-size: 1.15rem;
+        line-height: 1.5;
     }}
 
-    /* Removing uppercase from radio labels */
-    div[role="radiogroup"] label {{
-        text-transform: none !important;
-        font-weight: 500 !important;
+    /* Input Labels (Roman 400) */
+    label {{
+        font-weight: 400 !important;
+        font-size: 1rem !important;
     }}
     </style>
     """, unsafe_allow_html=True)
 
-st.title("⛽ Pakistan Fuel Hike Impact")
+# --- HEADER SECTION ---
+st.title("Pakistan Fuel Hike Impact")
 st.markdown(f"### {current_date}")
 
-# STEP 1: CATEGORY
+# --- SELECTION FLOW ---
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
 
-# STEP 2: MODEL
-model_choice = st.selectbox(f"Which vehicle do you drive?", list(categories[cat_choice].keys()))
+model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
 tank_size = categories[cat_choice][model_choice]
 
 # HALFTONE IMAGE PLACEHOLDER
 st.image("https://via.placeholder.com/600x250.png?text=Halftone+Vehicle+Graphic", use_column_width=True)
 
-# STEP 3: FUEL & USAGE
 col1, col2 = st.columns(2)
 with col1:
     fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"])
@@ -129,7 +124,7 @@ c1, c2 = st.columns(2)
 c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
 c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
 
-# Final message with reduced weight (500) and no bolding markers to ensure CSS control
+# Final Bottom Line Message (Medium Weight, No Bolding)
 st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
 
 st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
