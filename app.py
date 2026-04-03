@@ -120,7 +120,8 @@ col1, col2 = st.columns(2)
 with col1:
     fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"])
 with col2:
-    fills = st.slider("Fills per month", min_value=0.5, max_value=12.0, value=2.0, step=0.5)
+    # UPDATED LABEL
+    fills = st.slider("How many times do you refuel each month?", min_value=0.5, max_value=12.0, value=2.0, step=0.5)
 
 # --- CALCULATIONS ---
 hike = fuel_impacts[fuel_choice]["hike"]
