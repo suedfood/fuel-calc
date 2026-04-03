@@ -32,6 +32,7 @@ st.markdown(f"""
         src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
         font-weight: 400;
     }}
+
     /* 500 - Medium */
     @font-face {{
         font-family: 'NeueHaas';
@@ -39,83 +40,72 @@ st.markdown(f"""
         font-weight: 500;
     }}
 
-    /* Global Font Override */
-    html, body, [class*="st-"], div, span, p {{
+    /* Global Font Override - Strictly Neue Haas Medium */
+    html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
         text-transform: none !important;
+        font-weight: 500 !important; 
     }}
 
-    /* ANCHOR POINTS - Medium (500) */
-    h1, h3, [data-testid="stMetricValue"], .stAlert p, .date-subheader {{
-        font-weight: 500 !important;
-        color: #1A1A1A;
+    /* SURGICAL WEIGHT REDUCTION (To Roman 400) */
+    /* 1. Category Labels (Radio) */
+    div[role="radiogroup"] label p {{
+        font-weight: 400 !important;
     }}
 
-    /* Title Scale */
+    /* 2. Dropdown Text (Vehicles & Fuel) */
+    div[data-baseweb="select"] div {{
+        font-weight: 400 !important;
+    }}
+
+    /* Title Styling */
     h1 {{
         letter-spacing: -1.2px;
         font-size: 2.8rem !important;
+        color: #1A1A1A;
     }}
 
-    /* Date Subheader */
-    .date-subheader {{
-        font-family: 'NeueHaas' !important;
-        font-size: 1.2rem;
-        color: #444;
-        margin-bottom: 2rem;
-        letter-spacing: -0.3px;
-    }}
-
-    /* Fuel Impact Report Header */
+    /* Dynamic Date & Subheaders */
     h3 {{
         letter-spacing: -0.5px;
-        font-size: 1.5rem !important;
+        color: #444;
     }}
 
-    /* Metrics Value Scale */
+    /* The Numbers */
     [data-testid="stMetricValue"] {{
         font-size: 42px !important;
         letter-spacing: -0.8px;
+        color: #1A1A1A;
     }}
 
-    /* INSTRUCTIONAL TEXT - Roman (400) */
-    label, div[role="radiogroup"] label, [data-testid="stMetricLabel"], .stCaption {{
-        font-weight: 400 !important;
-    }}
-
-    /* Surgical Weight Reduction for Selection Items */
-    div[role="radiogroup"] label p, div[data-baseweb="select"] div {{
-        font-weight: 400 !important;
-    }}
-
-    /* Label Spacing and Color */
+    /* Metric Labels */
     [data-testid="stMetricLabel"] {{
+        letter-spacing: 0px;
         font-size: 15px !important;
-        color: #666;
+        color: #555;
     }}
-
-    label, div[role="radiogroup"] label {{
-        font-size: 1rem !important;
-        color: #333;
-    }}
-
-    /* Alert Box Polish */
+    
+    /* The Final Message Box */
     .stAlert p {{
         font-size: 1.15rem;
         line-height: 1.5;
     }}
 
+    /* Input Labels and Radio Labels */
+    label, div[role="radiogroup"] label {{
+        font-size: 1rem !important;
+    }}
+
     /* Captions */
     .stCaption {{
         color: #888;
-        font-size: 0.9rem !important;
     }}
     </style>
     """, unsafe_allow_html=True)
 
 # --- HEADER SECTION ---
-st.title("⛽ Pakistan Fuel Hike Impact")
-st.markdown(f'<p class="date-subheader">{current_date}</p>', unsafe_allow_html=True)
+st.title("Pakistan Fuel Hike Impact")
+st.markdown(f"### {current_date}")
 
 # --- SELECTION FLOW ---
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
@@ -132,14 +122,14 @@ with col1:
 with col2:
     fills = st.slider("How many times do you refuel each month?", min_value=0.5, max_value=12.0, value=2.0, step=0.5)
 
-# NEW QUESTION: Refuel Percentage
-refuel_pct = st.slider("On average, how full is your vehicle's tank when you refuel?", min_value=0, max_value=95, value=0, step=5)
+# NEW QUESTION
+tank_fullness = st.slider("On average, how full is your vehicle's tank when you refuel?", min_value=0, max_value=100, value=0, step=5, format="%d%%")
 
 # --- CALCULATIONS ---
+# Logic: Calculate the actual volume of fuel added (e.g., if 20% full, you refill 80% of tank size)
+refill_volume_factor = 1 - (tank_fullness / 100)
 hike = fuel_impacts[fuel_choice]["hike"]
-# Adjusting based on refuel percentage (e.g. if 20% full, fill amount is 80% of tank)
-fill_amount_litres = tank_size * (1 - (refuel_pct / 100))
-per_tank = fill_amount_litres * hike
+per_tank = (tank_size * refill_volume_factor) * hike
 monthly_total = per_tank * fills
 
 # --- THE REPORT ---
