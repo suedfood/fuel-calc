@@ -39,7 +39,6 @@ st.markdown(f"""
         src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
         font-weight: 400;
     }}
-
     /* 500 - Medium */
     @font-face {{
         font-family: 'NeueHaas';
@@ -48,46 +47,49 @@ st.markdown(f"""
     }}
 
     /* Global Font Override */
-    html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
+    html, body, [class*="st-"], div, span, p {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
         text-transform: none !important;
     }}
 
     /* ANCHOR POINTS - Medium (500) */
-    h1, h3, [data-testid="stMetricValue"], .stAlert p, .date-subheader {{
+    h1, h3, [data-testid="stMetricValue"], .stAlert p, .date-subheader, button p {{
         font-weight: 500 !important;
         color: #1A1A1A;
     }}
 
-    /* Title Scale */
+    /* Title & Subheader Scales */
     h1 {{
         letter-spacing: -1.2px;
         font-size: 2.8rem !important;
     }}
+    
+    h3 {{
+        letter-spacing: -0.5px;
+        font-size: 1.5rem !important;
+    }}
 
-    /* Date Subheader - Medium 500 */
     .date-subheader {{
-        font-family: 'NeueHaas' !important;
         font-size: 1.2rem;
         color: #444;
         margin-bottom: 2rem;
         letter-spacing: -0.3px;
     }}
 
-    /* Subheader - Medium 500 */
-    h3 {{
-        letter-spacing: -0.5px;
-        font-size: 1.5rem !important;
-    }}
-
-    /* Numbers - Medium 500 */
+    /* Numbers Scale */
     [data-testid="stMetricValue"] {{
         font-size: 42px !important;
         letter-spacing: -0.8px;
     }}
 
     /* INSTRUCTIONAL TEXT - Roman (400) */
-    label, div[role="radiogroup"] label, [data-testid="stMetricLabel"], .stCaption, div[data-baseweb="select"] div {{
+    /* All labels, radio options, dropdown items, and captions */
+    label, div[role="radiogroup"] label p, [data-testid="stMetricLabel"], .stCaption, div[data-baseweb="select"] div {{
+        font-weight: 400 !important;
+    }}
+
+    /* Specific surgical overrides for the interactive elements */
+    div[role="radiogroup"] label {{
         font-weight: 400 !important;
     }}
 
@@ -97,21 +99,27 @@ st.markdown(f"""
         color: #666;
     }}
 
-    label, div[role="radiogroup"] label {{
+    label {{
         font-size: 1rem !important;
         color: #333;
     }}
 
-    /* Final Message Box - Medium 500 */
+    /* The Final Message Box */
     .stAlert p {{
         font-size: 1.15rem;
         line-height: 1.5;
     }}
 
-    /* Captions - Roman 400 */
+    /* Captions */
     .stCaption {{
         color: #888;
         font-size: 0.9rem !important;
+    }}
+
+    /* Custom Button Styling to match Medium 500 */
+    .stButton>button {{
+        border-radius: 4px;
+        border: 1px solid #ddd;
     }}
     </style>
     """, unsafe_allow_html=True)
@@ -159,7 +167,6 @@ if st.session_state.step >= 5:
 
 # --- FINAL REPORT ---
 if st.session_state.step >= 6:
-    # Calculations
     refill_volume_factor = 1 - (tank_fullness / 100)
     hike = fuel_impacts[fuel_choice]["hike"]
     per_tank = (tank_size * refill_volume_factor) * hike
