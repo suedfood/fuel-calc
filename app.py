@@ -15,44 +15,45 @@ categories = {
     "Pickup/4x4": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
-# 2. IMAGE MAPPING: Synced with your GitHub Filenames
-github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
+# 2. IMAGE MAPPING (Using jsDelivr for correct MIME types)
+# This mirrors your GitHub but sends headers that Safari likes.
+cdn_base = "https://cdn.jsdelivr.net/gh/suedfood/fuel-calc@main/"
 
 vehicle_images = {
-    "CD 70": github_base + "CD70.png",
-    "CG 125": github_base + "CG%20125.png",
-    "GS 150": github_base + "GS%20150.png",
-    "YBR 125": github_base + "YBR%20125.png",
-    "Suzuki Alto": github_base + "Alto.png",
-    "Suzuki Cultus": github_base + "Cultus.png",
-    "Suzuki Wagon R": github_base + "Wagon%20R.png",
-    "Suzuki Swift": github_base + "Swift.png",
-    "Kia Picanto": github_base + "Picanto.png",
-    "Suzuki Mehran": github_base + "Mehran.png",
-    "Honda City": github_base + "Honda%20City.png",
-    "Toyota Yaris": github_base + "Yaris.png",
-    "Changan Alsvin": github_base + "Alswin.png",
-    "Honda Civic": github_base + "Civic.png",
-    "Toyota Corolla": github_base + "Corolla.png",
-    "Hyundai Elantra": github_base + "Elantra.png",
-    "Proton Saga": github_base + "Proton%20Saga.png",
-    "Kia Sportage": github_base + "Sportage.png",
-    "Hyundai Tucson": github_base + "Tucson.png",
-    "Changan Oshan X7": github_base + "Oshan%20X7.png",
-    "MG HS": github_base + "MG%20HS.png",
-    "Haval H6": github_base + "Haval%20H6.png",
-    "Haval Jolion": github_base + "Haval%20Jolion.png",
-    "Kia Stonic": github_base + "Kia%20Stonic.png",
-    "Cherry Tiggo 4 Pro": github_base + "Cherry%20Tiggo%20Pro%204.png",
-    "Toyota Hilux/Revo": github_base + "Revo.png",
-    "Isuzu D-Max": github_base + "ISUZU%20D-Max.png",
-    "JAC T8": github_base + "Jac%20T-8.png",
-    "Toyota Fortuner": github_base + "Fortuner.png",
-    "Land Cruiser": github_base + "Land%20Cruiser.png"
+    "CD 70": cdn_base + "CD70.png",
+    "CG 125": cdn_base + "CG%20125.png",
+    "GS 150": cdn_base + "GS%20150.png",
+    "YBR 125": cdn_base + "YBR%20125.png",
+    "Suzuki Alto": cdn_base + "Alto.png",
+    "Suzuki Cultus": cdn_base + "Cultus.png",
+    "Suzuki Wagon R": cdn_base + "Wagon%20R.png",
+    "Suzuki Swift": cdn_base + "Swift.png",
+    "Kia Picanto": cdn_base + "Picanto.png",
+    "Suzuki Mehran": cdn_base + "Mehran.png",
+    "Honda City": cdn_base + "Honda%20City.png",
+    "Toyota Yaris": cdn_base + "Yaris.png",
+    "Changan Alsvin": cdn_base + "Alswin.png",
+    "Honda Civic": cdn_base + "Civic.png",
+    "Toyota Corolla": cdn_base + "Corolla.png",
+    "Hyundai Elantra": cdn_base + "Elantra.png",
+    "Proton Saga": cdn_base + "Proton%20Saga.png",
+    "Kia Sportage": cdn_base + "Sportage.png",
+    "Hyundai Tucson": cdn_base + "Tucson.png",
+    "Changan Oshan X7": cdn_base + "Oshan%20X7.png",
+    "MG HS": cdn_base + "MG%20HS.png",
+    "Haval H6": cdn_base + "Haval%20H6.png",
+    "Haval Jolion": cdn_base + "Haval%20Jolion.png",
+    "Kia Stonic": cdn_base + "Kia%20Stonic.png",
+    "Cherry Tiggo 4 Pro": cdn_base + "Cherry%20Tiggo%20Pro%204.png",
+    "Toyota Hilux/Revo": cdn_base + "Revo.png",
+    "Isuzu D-Max": cdn_base + "ISUZU%20D-Max.png",
+    "JAC T8": cdn_base + "Jac%20T-8.png",
+    "Toyota Fortuner": cdn_base + "Fortuner.png",
+    "Land Cruiser": cdn_base + "Land%20Cruiser.png"
 }
 
-# 3. UI SETUP & FONT INJECTION
-st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽", layout="centered")
+# 3. UI SETUP
+st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽")
 
 if 'step' not in st.session_state:
     st.session_state.step = 1
@@ -64,40 +65,39 @@ current_date = datetime.now().strftime("%B %d, %Y")
 
 st.markdown(f"""
     <style>
+    /* jsDelivr Font Loading (Safari Friendly) */
     @font-face {{
         font-family: 'NeueHaas';
-        src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
+        src: url('{cdn_base}NeueHaasDisplayRoman.ttf') format('truetype');
         font-weight: 400;
         font-display: swap;
     }}
     @font-face {{
         font-family: 'NeueHaas';
-        src: url('{github_base}NeueHaasDisplayMediu.ttf') format('truetype');
+        src: url('{cdn_base}NeueHaasDisplayMediu.ttf') format('truetype');
         font-weight: 500;
         font-display: swap;
     }}
 
-    /* Global Font Override - Medium 500 */
     html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
-        font-family: 'NeueHaas', -apple-system, sans-serif !important;
+        font-family: 'NeueHaas', -apple-system, BlinkMacSystemFont, sans-serif !important;
         text-transform: none !important;
         font-weight: 500 !important; 
     }}
 
-    /* DESKTOP STYLING (The standard you locked in) */
+    /* Layout & Type Scales */
     h1 {{ letter-spacing: -1.2px; font-size: 2.8rem !important; color: #1A1A1A; }}
     .subtitle {{ font-weight: 400 !important; font-size: 1.15rem; color: #555; margin-top: -20px; margin-bottom: 30px; }}
     [data-testid="stImage"] img {{ width: 240px !important; height: 240px !important; object-fit: cover !important; border-radius: 12px !important; margin-top: -5px; margin-bottom: 25px; }}
 
-    /* MOBILE OPTIMIZATION (Overrides for phones) */
+    /* Mobile Overrides */
     @media (max-width: 640px) {{
         h1 {{ font-size: 1.8rem !important; letter-spacing: -0.8px !important; }}
         .subtitle {{ font-size: 1.0rem !important; margin-top: -10px !important; }}
         [data-testid="stImage"] img {{ width: 180px !important; height: 180px !important; }}
-        [data-testid="stMetricValue"] {{ font-size: 32px !important; }}
     }}
 
-    /* SHARED STYLES */
+    /* Global Weights */
     div[role="radiogroup"] label p {{ font-weight: 400 !important; }}
     div[data-baseweb="select"] div {{ font-weight: 400 !important; }}
     h3 {{ letter-spacing: -0.5px; color: #444; }}
@@ -119,48 +119,44 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-# --- HEADER SECTION ---
+# --- APP LAYOUT ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {current_date}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
-# --- PROGRESSIVE FLOW ---
-
-# STEP 1: CATEGORY
+# STEP 1
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True)
 if st.session_state.step == 1:
     st.button("Continue", on_click=move_to_next)
 
-# STEP 2: MODEL & IMAGE
+# STEP 2
 if st.session_state.step >= 2:
     model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()))
     tank_size = categories[cat_choice][model_choice]
-    
     selected_img = vehicle_images.get(model_choice, "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=400&h=400")
     st.image(selected_img, width=240)
-    
     if st.session_state.step == 2:
         st.button("Continue", on_click=move_to_next)
 
-# STEP 3: FUEL
+# STEP 3
 if st.session_state.step >= 3:
     fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"])
     if st.session_state.step == 3:
         st.button("Continue", on_click=move_to_next)
 
-# STEP 4: REFUEL FREQUENCY
+# STEP 4
 if st.session_state.step >= 4:
     fills = st.slider("How many times do you refuel each month?", min_value=1, max_value=10, value=2, step=1)
     if st.session_state.step == 4:
         st.button("Continue", on_click=move_to_next)
 
-# STEP 5: TANK FULLNESS
+# STEP 5
 if st.session_state.step >= 5:
     tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", min_value=1, max_value=10, value=2, step=1)
     if st.session_state.step == 5:
         st.button("Show Final Report", on_click=move_to_next)
 
-# --- THE REPORT ---
+# FINAL REPORT
 if st.session_state.step >= 6:
     refill_volume_factor = 1 - (tank_scale / 10)
     hike = fuel_impacts[fuel_choice]["hike"]
@@ -174,5 +170,4 @@ if st.session_state.step >= 6:
     c2.metric("Total additional monthly cost", f"Rs. {monthly_total:,.0f}")
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly_total:,.0f} per month")
     st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
-    
     st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
