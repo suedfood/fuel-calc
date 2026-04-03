@@ -96,7 +96,7 @@ st.markdown(f"""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("Pakistan Fuel Hike Impact")
+st.title("⛽ Pakistan Fuel Hike Impact")
 st.markdown(f"### {current_date}")
 
 # STEP 1: CATEGORY
