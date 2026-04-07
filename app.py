@@ -45,8 +45,9 @@ if 'show_report' not in st.session_state:
 def trigger_report():
     st.session_state.show_report = True
 
-def reset_report():
-    st.session_state.show_report = False
+def absolute_reset():
+    st.session_state.clear()
+    st.rerun()
 
 # 3. CSS FORCE FIELD: STRICT APPROVED WEIGHTS
 st.markdown(f"""
@@ -62,7 +63,7 @@ st.markdown(f"""
         font-weight: 500; font-display: swap;
     }}
 
-    /* Global Base: 500 Medium */
+    /* Global Base: 500 Medium (Approved) */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], 
     [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
@@ -75,7 +76,7 @@ st.markdown(f"""
         background-color: white !important;
     }}
 
-    /* Specific Overrides: 400 Roman */
+    /* Specific Overrides: 400 Roman (Approved) */
     .subtitle {{
         font-weight: 400 !important;
         font-size: 1.15rem;
@@ -106,7 +107,7 @@ st.markdown(f"""
     [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A !important; font-weight: 500 !important; }}
     .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
 
-    /* Button Styling */
+    /* Default Button Style (500 Medium) */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: white !important;
@@ -144,7 +145,7 @@ st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
-# --- SEAMLESS FLOW: KEYS ENSURE PERSISTENCE ---
+# --- SEAMLESS AUTO-REVEAL FLOW ---
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None, key="cat_radio")
 
 if cat_choice:
@@ -160,16 +161,16 @@ if cat_choice:
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2, key="fills_slider")
             tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2, key="tank_slider")
             
-            # Button only shows if report is not active
+            # Action Button
             if not st.session_state.show_report:
                 st.button("Let's Go!", on_click=trigger_report)
 
 # --- THE REPORT ---
 if st.session_state.show_report:
-    # Calculation using the persistent session keys
+    # Calculations based on latest session state
     refill_vol = 1 - (st.session_state.tank_slider / 10)
-    current_tank_size = categories[st.session_state.cat_radio][st.session_state.model_select]
-    per_tank = (current_tank_size * refill_vol) * fuel_impacts[st.session_state.fuel_select]["hike"]
+    current_tank = categories[st.session_state.cat_radio][st.session_state.model_select]
+    per_tank = (current_tank * refill_vol) * fuel_impacts[st.session_state.fuel_select]["hike"]
     monthly = per_tank * st.session_state.fills_slider
 
     st.divider()
@@ -184,5 +185,5 @@ if st.session_state.show_report:
     
     # WRAPPED FOR ROMAN WEIGHT OVERRIDE
     st.markdown('<div class="roman-btn">', unsafe_allow_html=True)
-    st.button("Start Again", on_click=reset_report)
+    st.button("Start Again", on_click=absolute_reset)
     st.markdown('</div>', unsafe_allow_html=True)
