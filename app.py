@@ -175,7 +175,8 @@ if cat_choice:
         
         if fuel_choice:
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2, key="fills_slider")
-            tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2, key="tank_slider")
+            # UPDATED LABEL PER REQUEST
+            tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", 1, 10, 2, key="tank_slider")
             
             # Action Button (500 Medium)
             if not st.session_state.show_report:
