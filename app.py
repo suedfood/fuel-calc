@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime
 
 # 1. THE DATA: Revised as of April 07, 2026
+# Petrol rollback included (March base: 321.17 -> Current: 378.00)
 fuel_impacts = {
     "Petrol": {"hike": 56.83, "current": 378.00},
     "Diesel": {"hike": 184.49, "current": 520.35}
@@ -45,7 +46,7 @@ if 'show_report' not in st.session_state:
 def trigger_report():
     st.session_state.show_report = True
 
-# 3. THE CSS FORCE FIELD: STRICT APPROVED WEIGHTS
+# 3. CSS FORCE FIELD: STRICT WEIGHT CONFORMANCE
 st.markdown(f"""
     <style>
     @font-face {{
@@ -59,88 +60,82 @@ st.markdown(f"""
         font-weight: 500; font-display: swap;
     }}
 
-    /* Global Base: 500 Medium */
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], 
-    [class*="st-"], div, span, p, h1, h2, h3 {{
+    /* Global Body */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
+        background-color: white !important;
+        color: #31333F !important;
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
-        text-transform: none !important;
-        font-weight: 500 !important; 
+    }}
+
+    /* --- WEIGHT 500 (MEDIUM) --- */
+    h1, h2, h3, [data-testid="stMetricValue"], .main-btn button {{
+        font-family: 'NeueHaas', sans-serif !important;
+        font-weight: 500 !important;
+        color: #1A1A1A !important;
+    }}
+    h1 {{ letter-spacing: -1.2px !important; font-size: clamp(2rem, 8vw, 2.8rem) !important; }}
+
+    /* --- WEIGHT 400 (ROMAN) --- */
+    p, span, label, [data-testid="stMetricLabel"], .stCaption, .subtitle, 
+    div[role="radiogroup"] label p, .stButton > button {{
+        font-family: 'NeueHaas', sans-serif !important;
+        font-weight: 400 !important;
         color: #31333F !important;
     }}
     
-    [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
-        background-color: white !important;
-    }}
-
-    /* Specific Overrides: 400 Roman */
     .subtitle {{
-        font-weight: 400 !important;
-        font-size: 1.15rem;
+        font-size: clamp(1rem, 4vw, 1.15rem) !important;
         color: #555 !important;
         margin-top: -20px;
         margin-bottom: 30px;
     }}
 
-    div[role="radiogroup"] label p {{ font-weight: 400 !important; color: #31333F !important; opacity: 1 !important; }}
-    div[data-baseweb="select"] div {{ font-weight: 400 !important; }}
-    [data-testid="stMetricLabel"] {{ letter-spacing: 0px; font-size: 15px !important; color: #555; font-weight: 400 !important; }}
-    label, div[role="radiogroup"] label {{ font-size: 1rem !important; font-weight: 400 !important; }}
-    .stCaption {{ color: #888; font-weight: 400 !important; }}
-    
-    .custom-footer {{
-        font-family: 'NeueHaas' !important;
-        font-weight: 400 !important;
-        font-size: 0.85rem !important;
-        color: #AAA !important;
-        margin-top: 4rem;
-        padding-top: 1rem;
-        border-top: 1px solid #EEE;
-    }}
-
-    /* Headers & Metrics (500 Medium) */
-    h1 {{ letter-spacing: -1.2px; font-size: 2.8rem !important; color: #1A1A1A !important; font-weight: 500 !important; }}
-    h3 {{ letter-spacing: -0.5px; color: #444 !important; font-weight: 500 !important; }}
-    [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A !important; font-weight: 500 !important; }}
-    .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
-
-    /* Button Styling (Fixed Black Box) */
+    /* BUTTONS */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: white !important;
         border-radius: 8px !important;
         width: 100% !important;
-        font-weight: 500 !important;
+        padding: 0.6rem 1rem !important;
+        margin-top: 20px;
         border: none !important;
-        padding: 0.6rem !important;
     }}
-    .stButton > button p {{ color: white !important; font-weight: 500 !important; }}
+    /* Specifically keeping "Let's Go!" and "Start Again" text white */
+    .stButton > button p {{ color: white !important; }}
+    
+    /* Re-forcing 500 for the Main Action specifically */
+    .main-btn button p {{ font-weight: 500 !important; }}
 
-    /* Image Blending */
+    /* IMAGE & METRICS */
     [data-testid="stImage"] img {{
-        width: 240px !important;
+        max-width: 100% !important;
         height: auto !important;
+        width: 240px !important;
+        border-radius: 12px !important;
         mix-blend-mode: multiply;
         background-color: white !important;
-        border-radius: 12px;
+    }}
+    [data-testid="stMetricValue"] {{ 
+        font-size: clamp(2.2rem, 10vw, 42px) !important; 
+        letter-spacing: -0.8px !important; 
     }}
 
-    /* Slider UI Fix (Ensures tracks aren't invisible) */
-    [data-baseweb="slider"] {{ background-color: transparent !important; }}
-
+    /* UI Fixes */
+    div[role="radiogroup"] label p {{ opacity: 1 !important; }}
     #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-# --- APP CONTENT ---
+# --- HEADER SECTION ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
-# --- SEAMLESS FLOW ---
+# --- SEAMLESS AUTO-REVEAL FLOW ---
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None)
 
 if cat_choice:
-    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose car...")
+    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose your car...")
     
     if model_choice:
         tank_size = categories[cat_choice][model_choice]
@@ -152,8 +147,10 @@ if cat_choice:
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2)
             tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2)
             
-            if st.button("Let's Go!"):
-                st.session_state.show_report = True
+            # WRAPPING FOR WEIGHT 500
+            st.markdown('<div class="main-btn">', unsafe_allow_html=True)
+            st.button("Let's Go!", on_click=trigger_report)
+            st.markdown('</div>', unsafe_allow_html=True)
 
 # --- THE REPORT ---
 if st.session_state.show_report:
@@ -169,8 +166,9 @@ if st.session_state.show_report:
     
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
     st.caption("Data reflects the April 2026 revised official pricing.")
-    st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-weight: 400; font-size: 0.85rem; color: #AAA; margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #EEE;">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
     
+    # This button will be weight 400 (Roman)
     if st.button("Start Again"):
         st.session_state.show_report = False
         st.rerun()
