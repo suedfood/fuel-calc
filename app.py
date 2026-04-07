@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 
-# 1. THE DATA: Official Revised Data as of April 5, 2026
+# 1. THE DATA: Official Revised Data as of April 2026
 # Petrol saw an Rs. 80 rollback; Diesel remains at the peak.
 fuel_impacts = {
     "Petrol": {"hike": 56.83, "current": 378.00},
@@ -50,6 +50,7 @@ def trigger_report():
 # 4. CSS FORCE FIELD: STRICT FONT WEIGHT CONFORMANCE
 st.markdown(f"""
     <style>
+    /* THEME LOCK */
     :root {{
         --primary-color: #FF4B4B;
         --background-color: #FFFFFF;
@@ -74,6 +75,7 @@ st.markdown(f"""
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
     }}
 
+    /* --- WEIGHT 500: HEADERS, DATE, METRIC VALUES, BUTTONS --- */
     h1, h2, h3, [data-testid="stMetricValue"], .stButton > button, .stButton > button p {{
         font-family: 'NeueHaas', sans-serif !important;
         font-weight: 500 !important;
@@ -81,6 +83,7 @@ st.markdown(f"""
     }}
     h1 {{ letter-spacing: -1.2px !important; font-size: clamp(2rem, 8vw, 2.8rem) !important; }}
 
+    /* --- WEIGHT 400: LABELS, CAPTIONS, BODY, SUBTITLE --- */
     p, span, label, [data-testid="stMetricLabel"], .stCaption, .subtitle, div[role="radiogroup"] label p {{
         font-family: 'NeueHaas', sans-serif !important;
         font-weight: 400 !important;
@@ -93,6 +96,7 @@ st.markdown(f"""
         margin-bottom: 30px;
     }}
 
+    /* BUTTON HARDENING */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: #FFFFFF !important;
@@ -104,20 +108,22 @@ st.markdown(f"""
     }}
     .stButton > button p {{ color: white !important; }}
 
+    /* IMAGE & METRICS */
     [data-testid="stImage"] img {{
         max-width: 100% !important;
         height: auto !important;
         width: 240px !important;
         border-radius: 12px !important;
-        margin-top: -5px;
-        margin-bottom: 25px;
-        background-color: white !important;
         mix-blend-mode: multiply;
+        background-color: white !important;
     }}
     [data-testid="stMetricValue"] {{ 
         font-size: clamp(2.2rem, 10vw, 42px) !important; 
         letter-spacing: -0.8px !important; 
     }}
+
+    /* Fix Dark Mode Radio Visibility */
+    div[role="radiogroup"] label p {{ opacity: 1 !important; }}
 
     #MainMenu, footer {{visibility: hidden;}}
     </style>
@@ -132,13 +138,13 @@ st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel e
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None)
 
 if cat_choice:
-    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose your car...")
+    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose car...")
     
     if model_choice:
         tank_size = categories[cat_choice][model_choice]
         st.image(vehicle_images.get(model_choice, github_base + "CD70.png"))
         
-        fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"], index=None, placeholder="Select fuel type...")
+        fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"], index=None, placeholder="Select fuel...")
         
         if fuel_choice:
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2)
@@ -160,7 +166,7 @@ if st.session_state.show_report:
     c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
     
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
-    st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
+    st.caption("Data reflects the April official price re-basing compared to March 2026.")
     st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
     
     if st.button("Start Again"):
