@@ -1,8 +1,8 @@
 import streamlit as st
 from datetime import datetime
 
-# 1. THE DATA: Official Revised Data as of April 5, 2026
-# Petrol saw an Rs. 80 rollback; Diesel remains at the peak.
+# 1. THE DATA: Revised as of April 07, 2026
+# Petrol rollback included (March base: 321.17 -> Current: 378.00)
 fuel_impacts = {
     "Petrol": {"hike": 56.83, "current": 378.00},
     "Diesel": {"hike": 184.49, "current": 520.35}
@@ -16,7 +16,6 @@ categories = {
     "Pickup/4x4": {"Toyota Hilux/Revo": 80, "Isuzu D-Max": 76, "JAC T8": 76, "Toyota Fortuner": 80, "Land Cruiser": 93}
 }
 
-# 2. IMAGE MAPPING
 github_base = "https://raw.githubusercontent.com/suedfood/fuel-calc/main/"
 
 vehicle_images = {
@@ -38,101 +37,101 @@ vehicle_images = {
     "Land Cruiser": github_base + "Land%20Cruiser.png"
 }
 
-# 3. UI SETUP
+# 2. UI SETUP
 st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽", layout="centered")
 
 if 'show_report' not in st.session_state:
     st.session_state.show_report = False
 
-def trigger_report():
-    st.session_state.show_report = True
-
-# 4. CSS FORCE FIELD: STRICT FONT WEIGHT CONFORMANCE
+# 3. CSS FORCE FIELD: WEIGHT CONFORMANCE FROM YOUR SNIPPET
 st.markdown(f"""
     <style>
-    :root {{
-        --primary-color: #FF4B4B;
-        --background-color: #FFFFFF;
-        --secondary-background-color: #F0F2F6;
-        --text-color: #31333F;
-    }}
-
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
-        font-weight: 400; font-display: swap;
+        font-weight: 400;
     }}
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayMediu.ttf') format('truetype');
-        font-weight: 500; font-display: swap;
+        font-weight: 500;
     }}
 
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
+    /* Global Reset to 500 Medium */
+    html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
+        font-family: 'NeueHaas', -apple-system, sans-serif !important;
+        text-transform: none !important;
+        font-weight: 500 !important; 
         background-color: white !important;
         color: #31333F !important;
-        font-family: 'NeueHaas', -apple-system, sans-serif !important;
     }}
 
-    h1, h2, h3, [data-testid="stMetricValue"], .stButton > button, .stButton > button p {{
-        font-family: 'NeueHaas', sans-serif !important;
-        font-weight: 500 !important;
-        color: #1A1A1A !important;
-    }}
-    h1 {{ letter-spacing: -1.2px !important; font-size: clamp(2rem, 8vw, 2.8rem) !important; }}
-
-    p, span, label, [data-testid="stMetricLabel"], .stCaption, .subtitle, div[role="radiogroup"] label p {{
-        font-family: 'NeueHaas', sans-serif !important;
-        font-weight: 400 !important;
-        color: #31333F !important;
-    }}
+    /* Specific Overrides to 400 Roman */
     .subtitle {{
-        font-size: clamp(1rem, 4vw, 1.15rem) !important;
+        font-weight: 400 !important;
+        font-size: 1.15rem;
         color: #555 !important;
         margin-top: -20px;
         margin-bottom: 30px;
     }}
 
+    div[role="radiogroup"] label p {{ font-weight: 400 !important; color: #31333F !important; opacity: 1 !important; }}
+    div[data-baseweb="select"] div {{ font-weight: 400 !important; }}
+    [data-testid="stMetricLabel"] {{ letter-spacing: 0px; font-size: 15px !important; color: #555; font-weight: 400 !important; }}
+    label, div[role="radiogroup"] label {{ font-size: 1rem !important; font-weight: 400 !important; }}
+    .stCaption {{ color: #888; font-weight: 400 !important; }}
+    
+    .custom-footer {{
+        font-family: 'NeueHaas' !important;
+        font-weight: 400 !important;
+        font-size: 0.85rem !important;
+        color: #AAA !important;
+        margin-top: 4rem;
+        padding-top: 1rem;
+        border-top: 1px solid #EEE;
+    }}
+
+    /* Header & Metric Fixes */
+    h1 {{ letter-spacing: -1.2px; font-size: 2.8rem !important; color: #1A1A1A !important; }}
+    h3 {{ letter-spacing: -0.5px; color: #444 !important; }}
+    [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A !important; }}
+    .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
+
+    /* Button Styling */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: #FFFFFF !important;
         border-radius: 8px !important;
         width: 100% !important;
-        padding: 0.6rem 1rem !important;
-        margin-top: 20px;
+        font-weight: 500 !important;
         border: none !important;
+        padding: 0.6rem !important;
     }}
-    .stButton > button p {{ color: white !important; }}
+    .stButton > button p {{ color: white !important; font-weight: 500 !important; }}
 
+    /* Image Blending */
     [data-testid="stImage"] img {{
-        max-width: 100% !important;
-        height: auto !important;
         width: 240px !important;
-        border-radius: 12px !important;
-        margin-top: -5px;
-        margin-bottom: 25px;
-        background-color: white !important;
+        height: auto !important;
         mix-blend-mode: multiply;
-    }}
-    [data-testid="stMetricValue"] {{ 
-        font-size: clamp(2.2rem, 10vw, 42px) !important; 
-        letter-spacing: -0.8px !important; 
+        background-color: white !important;
+        border-radius: 12px;
     }}
 
     #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-# --- HEADER SECTION ---
+# --- APP CONTENT ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
-# --- SEAMLESS AUTO-REVEAL FLOW ---
+# SEAMLESS FLOW
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None)
 
 if cat_choice:
-    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose your car...")
+    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose car...")
     
     if model_choice:
         tank_size = categories[cat_choice][model_choice]
@@ -144,13 +143,13 @@ if cat_choice:
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2)
             tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2)
             
-            st.button("Let's Go!", on_click=trigger_report)
+            if st.button("Let's Go!"):
+                st.session_state.show_report = True
 
-# --- THE REPORT ---
+# THE REPORT
 if st.session_state.show_report:
     refill_vol = 1 - (tank_scale / 10)
-    hike = fuel_impacts[fuel_choice]["hike"]
-    per_tank = (tank_size * refill_vol) * hike
+    per_tank = (tank_size * refill_vol) * fuel_impacts[fuel_choice]["hike"]
     monthly = per_tank * fills
 
     st.divider()
@@ -160,7 +159,7 @@ if st.session_state.show_report:
     c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
     
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
-    st.caption("Data reflects the April 3rd official price re-basing compared to March 2026.")
+    st.caption("Data reflects the April 2026 revised official pricing.")
     st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
     
     if st.button("Start Again"):
