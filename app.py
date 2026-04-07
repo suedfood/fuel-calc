@@ -103,7 +103,7 @@ st.markdown(f"""
     [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A !important; font-weight: 500 !important; }}
     .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
 
-    /* Button Styling (Fixed Black Box) */
+    /* Button Styling */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: white !important;
@@ -115,6 +115,11 @@ st.markdown(f"""
     }}
     .stButton > button p {{ color: white !important; font-weight: 500 !important; }}
 
+    /* RESET BUTTON ONLY (400 Roman Override) */
+    .roman-btn button, .roman-btn button p {{
+        font-weight: 400 !important;
+    }}
+
     /* Image Blending */
     [data-testid="stImage"] img {{
         width: 240px !important;
@@ -124,14 +129,14 @@ st.markdown(f"""
         border-radius: 12px;
     }}
 
-    /* Slider UI Fix (Ensures tracks aren't invisible) */
+    /* Slider UI Fix */
     [data-baseweb="slider"] {{ background-color: transparent !important; }}
 
     #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-# --- APP CONTENT ---
+# --- HEADER SECTION ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
@@ -171,6 +176,9 @@ if st.session_state.show_report:
     st.caption("Data reflects the April 2026 revised official pricing.")
     st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
     
+    # WRAPPED FOR ROMAN WEIGHT
+    st.markdown('<div class="roman-btn">', unsafe_allow_html=True)
     if st.button("Start Again"):
         st.session_state.show_report = False
         st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
