@@ -46,11 +46,10 @@ def trigger_report():
     st.session_state.show_report = True
 
 def absolute_reset():
-    # FIXED: Clear state without redundant rerun call
     st.session_state.clear()
     st.session_state.show_report = False
 
-# 3. CSS FORCE FIELD: LOCKED FONT WEIGHTS
+# 3. CSS FORCE FIELD: STRICT APPROVED WEIGHTS & DARK MODE FIX
 st.markdown(f"""
     <style>
     @font-face {{
@@ -64,79 +63,75 @@ st.markdown(f"""
         font-weight: 500; font-display: swap;
     }}
 
-    /* Global Base: 500 Medium */
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], 
-    [class*="st-"], div, span, p, h1, h2, h3 {{
-        font-family: 'NeueHaas', -apple-system, sans-serif !important;
-        text-transform: none !important;
-        font-weight: 500 !important; 
-        color: #31333F !important;
-    }}
-    
-    [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
+    /* Global Base */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
         background-color: white !important;
+        color: #31333F !important;
+        font-family: 'NeueHaas', -apple-system, sans-serif !important;
     }}
 
-    /* Specific Overrides: 400 Roman */
-    .subtitle {{
+    /* --- WEIGHT 500 (MEDIUM): Approved for Headers, Metrics, Let's Go --- */
+    h1, h2, h3, [data-testid="stMetricValue"], .main-btn button p {{
+        font-family: 'NeueHaas', sans-serif !important;
+        font-weight: 500 !important;
+        color: #1A1A1A !important;
+        text-transform: none !important;
+    }}
+    h1 {{ letter-spacing: -1.2px !important; font-size: clamp(2rem, 8vw, 2.8rem) !important; }}
+    [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px !important; }}
+
+    /* --- WEIGHT 400 (ROMAN): Approved for Labels, Subtitles, Captions, Start Again --- */
+    p, span, label, [data-testid="stMetricLabel"], .stCaption, .subtitle, 
+    div[role="radiogroup"] label p, div[data-baseweb="select"] div, .roman-btn button p {{
+        font-family: 'NeueHaas', sans-serif !important;
         font-weight: 400 !important;
-        font-size: 1.15rem;
+        color: #31333F !important;
+        text-transform: none !important;
+    }}
+    
+    .subtitle {{
+        font-size: clamp(1rem, 4vw, 1.15rem) !important;
         color: #555 !important;
         margin-top: -20px;
         margin-bottom: 30px;
     }}
 
-    div[role="radiogroup"] label p {{ font-weight: 400 !important; color: #31333F !important; opacity: 1 !important; }}
-    div[data-baseweb="select"] div {{ font-weight: 400 !important; }}
-    [data-testid="stMetricLabel"] {{ letter-spacing: 0px; font-size: 15px !important; color: #555; font-weight: 400 !important; }}
-    label, div[role="radiogroup"] label {{ font-size: 1rem !important; font-weight: 400 !important; }}
-    .stCaption {{ color: #888; font-weight: 400 !important; }}
+    /* DARK MODE INPUT FIX (Targets the "Black Boxes") */
+    div[data-baseweb="select"] > div {{
+        background-color: #F0F2F6 !important;
+        color: #31333F !important;
+    }}
     
-    .custom-footer {{
-        font-family: 'NeueHaas' !important;
+    div[data-baseweb="popover"] li {{
+        background-color: white !important;
+        color: #31333F !important;
         font-weight: 400 !important;
-        font-size: 0.85rem !important;
-        color: #AAA !important;
-        margin-top: 4rem;
-        padding-top: 1rem;
-        border-top: 1px solid #EEE;
     }}
 
-    /* Headers & Metrics (500 Medium) */
-    h1 {{ letter-spacing: -1.2px; font-size: 2.8rem !important; color: #1A1A1A !important; font-weight: 500 !important; }}
-    h3 {{ letter-spacing: -0.5px; color: #444 !important; font-weight: 500 !important; }}
-    [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A !important; font-weight: 500 !important; }}
-    .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
-
-    /* Button Styling */
+    /* BUTTONS: Global Block Style */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: white !important;
         border-radius: 8px !important;
         width: 100% !important;
-        font-weight: 500 !important;
+        padding: 0.6rem 1rem !important;
+        margin-top: 20px;
         border: none !important;
-        padding: 0.6rem !important;
     }}
-    .stButton > button p {{ color: white !important; font-weight: 500 !important; }}
+    .stButton > button p {{ color: white !important; }}
 
-    /* RESET BUTTON ONLY (400 Roman Override) */
-    .roman-btn button, .roman-btn button p {{
-        font-weight: 400 !important;
-    }}
-
-    /* Image Blending */
+    /* IMAGE & METRICS */
     [data-testid="stImage"] img {{
-        width: 240px !important;
+        max-width: 100% !important;
         height: auto !important;
+        width: 240px !important;
+        border-radius: 12px !important;
         mix-blend-mode: multiply;
         background-color: white !important;
-        border-radius: 12px;
     }}
 
-    /* Slider UI Fix */
-    [data-baseweb="slider"] {{ background-color: transparent !important; }}
-
+    /* UI Fixes: Keep sliders visible */
+    div[role="radiogroup"] label p {{ opacity: 1 !important; }}
     #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
@@ -162,9 +157,11 @@ if cat_choice:
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2, key="fills_slider")
             tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2, key="tank_slider")
             
-            # Action Button
+            # Action Button (500 Medium)
             if not st.session_state.show_report:
+                st.markdown('<div class="main-btn">', unsafe_allow_html=True)
                 st.button("Let's Go!", on_click=trigger_report)
+                st.markdown('</div>', unsafe_allow_html=True)
 
 # --- THE REPORT ---
 if st.session_state.show_report:
@@ -181,9 +178,9 @@ if st.session_state.show_report:
     
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
     st.caption("Data reflects the April 2026 revised official pricing.")
-    st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-weight: 400; font-size: 0.85rem; color: #AAA; margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #EEE;">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
     
-    # WRAPPED FOR ROMAN WEIGHT OVERRIDE
+    # Reset Button (400 Roman)
     st.markdown('<div class="roman-btn">', unsafe_allow_html=True)
     st.button("Start Again", on_click=absolute_reset)
     st.markdown('</div>', unsafe_allow_html=True)
