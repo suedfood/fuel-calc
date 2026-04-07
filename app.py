@@ -45,7 +45,10 @@ if 'show_report' not in st.session_state:
 def trigger_report():
     st.session_state.show_report = True
 
-# 3. THE CSS FORCE FIELD: STRICT APPROVED WEIGHTS
+def reset_report():
+    st.session_state.show_report = False
+
+# 3. CSS FORCE FIELD: STRICT APPROVED WEIGHTS
 st.markdown(f"""
     <style>
     @font-face {{
@@ -141,30 +144,33 @@ st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
-# --- SEAMLESS FLOW ---
-cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None)
+# --- SEAMLESS FLOW: KEYS ENSURE PERSISTENCE ---
+cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None, key="cat_radio")
 
 if cat_choice:
-    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose car...")
+    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose car...", key="model_select")
     
     if model_choice:
         tank_size = categories[cat_choice][model_choice]
         st.image(vehicle_images.get(model_choice, github_base + "CD70.png"))
         
-        fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"], index=None, placeholder="Select fuel type...")
+        fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"], index=None, placeholder="Select fuel type...", key="fuel_select")
         
         if fuel_choice:
-            fills = st.slider("How many times do you refuel each month?", 1, 10, 2)
-            tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2)
+            fills = st.slider("How many times do you refuel each month?", 1, 10, 2, key="fills_slider")
+            tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2, key="tank_slider")
             
-            if st.button("Let's Go!"):
-                st.session_state.show_report = True
+            # Button only shows if report is not active
+            if not st.session_state.show_report:
+                st.button("Let's Go!", on_click=trigger_report)
 
 # --- THE REPORT ---
 if st.session_state.show_report:
-    refill_vol = 1 - (tank_scale / 10)
-    per_tank = (tank_size * refill_vol) * fuel_impacts[fuel_choice]["hike"]
-    monthly = per_tank * fills
+    # Calculation using the persistent session keys
+    refill_vol = 1 - (st.session_state.tank_slider / 10)
+    current_tank_size = categories[st.session_state.cat_radio][st.session_state.model_select]
+    per_tank = (current_tank_size * refill_vol) * fuel_impacts[st.session_state.fuel_select]["hike"]
+    monthly = per_tank * st.session_state.fills_slider
 
     st.divider()
     st.subheader("Fuel Impact Report")
@@ -176,9 +182,7 @@ if st.session_state.show_report:
     st.caption("Data reflects the April 2026 revised official pricing.")
     st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
     
-    # WRAPPED FOR ROMAN WEIGHT
+    # WRAPPED FOR ROMAN WEIGHT OVERRIDE
     st.markdown('<div class="roman-btn">', unsafe_allow_html=True)
-    if st.button("Start Again"):
-        st.session_state.show_report = False
-        st.rerun()
+    st.button("Start Again", on_click=reset_report)
     st.markdown('</div>', unsafe_allow_html=True)
