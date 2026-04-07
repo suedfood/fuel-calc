@@ -49,7 +49,7 @@ def absolute_reset():
     st.session_state.clear()
     st.session_state.show_report = False
 
-# 3. CSS FORCE FIELD: STRICT APPROVED WEIGHTS & DARK MODE BOX FIX
+# 3. CSS FORCE FIELD: STRICT APPROVED WEIGHTS & TARGETED DROPDOWN FIX
 st.markdown(f"""
     <style>
     @font-face {{
@@ -86,13 +86,8 @@ st.markdown(f"""
     }}
 
     div[role="radiogroup"] label p {{ font-weight: 400 !important; color: #31333F !important; opacity: 1 !important; }}
-    
-    /* Input Box Weight Fix */
     div[data-baseweb="select"] div {{ font-weight: 400 !important; color: #31333F !important; }}
-    
-    /* Metric Label Weight Fix */
     [data-testid="stMetricLabel"] {{ letter-spacing: 0px; font-size: 15px !important; color: #555; font-weight: 400 !important; }}
-    
     label, div[role="radiogroup"] label {{ font-size: 1rem !important; font-weight: 400 !important; }}
     .stCaption {{ color: #888; font-weight: 400 !important; }}
     
@@ -112,14 +107,20 @@ st.markdown(f"""
     [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A !important; font-weight: 500 !important; }}
     .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
 
-    /* DARK MODE BOX FIX (Ensures text is readable) */
+    /* --- DARK MODE SELECTBOX & DROPDOWN FIX --- */
     div[data-baseweb="select"] > div {{
         background-color: #F0F2F6 !important;
         color: #31333F !important;
     }}
-    div[role="listbox"] ul li {{
+    
+    /* Targets the floating listbox menu in dark mode */
+    [data-baseweb="popover"] ul {{
+        background-color: white !important;
+    }}
+    [data-baseweb="popover"] li {{
         background-color: white !important;
         color: #31333F !important;
+        font-family: 'NeueHaas', sans-serif !important;
         font-weight: 400 !important;
     }}
 
@@ -140,7 +141,7 @@ st.markdown(f"""
         font-weight: 400 !important;
     }}
 
-    /* Image Blending */
+    /* Image & UI Fixes */
     [data-testid="stImage"] img {{
         width: 240px !important;
         height: auto !important;
@@ -148,15 +149,12 @@ st.markdown(f"""
         background-color: white !important;
         border-radius: 12px;
     }}
-
-    /* Slider UI Fix */
     [data-baseweb="slider"] {{ background-color: transparent !important; }}
-
     #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-# --- HEADER SECTION ---
+# --- APP CONTENT ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
@@ -175,16 +173,14 @@ if cat_choice:
         
         if fuel_choice:
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2, key="fills_slider")
-            # UPDATED LABEL PER REQUEST
             tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", 1, 10, 2, key="tank_slider")
             
-            # Action Button (500 Medium)
             if not st.session_state.show_report:
                 st.button("Let's Go!", on_click=trigger_report)
 
 # --- THE REPORT ---
 if st.session_state.show_report:
-    # SAFETY CHECK: Only calculate if inputs haven't been cleared (fixes KeyError: None)
+    # Safety Check for valid inputs
     if all(st.session_state.get(k) is not None for k in ["cat_radio", "model_select", "fuel_select"]):
         refill_vol = 1 - (st.session_state.tank_slider / 10)
         current_tank = categories[st.session_state.cat_radio][st.session_state.model_select]
@@ -201,7 +197,6 @@ if st.session_state.show_report:
         st.caption("Data reflects the April 2026 revised official pricing.")
         st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
         
-        # WRAPPED FOR ROMAN WEIGHT OVERRIDE
         st.markdown('<div class="roman-btn">', unsafe_allow_html=True)
         st.button("Start Again", on_click=absolute_reset)
         st.markdown('</div>', unsafe_allow_html=True)
