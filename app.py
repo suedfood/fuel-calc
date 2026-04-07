@@ -2,7 +2,6 @@ import streamlit as st
 from datetime import datetime
 
 # 1. THE DATA: Revised as of April 07, 2026
-# Petrol rollback included (March base: 321.17 -> Current: 378.00)
 fuel_impacts = {
     "Petrol": {"hike": 56.83, "current": 378.00},
     "Diesel": {"hike": 184.49, "current": 520.35}
@@ -43,73 +42,71 @@ st.set_page_config(page_title="Fuel Surplus Calc", page_icon="⛽", layout="cent
 if 'show_report' not in st.session_state:
     st.session_state.show_report = False
 
-# 3. CSS FORCE FIELD: WEIGHT CONFORMANCE FROM YOUR SNIPPET
+# 3. THE CSS FORCE FIELD: WEIGHT CONFORMANCE & UI FIX
 st.markdown(f"""
     <style>
+    /* 1. THEME LOCK & FONT INJECTION */
+    :root {{
+        --primary-color: #FF4B4B;
+        --background-color: #FFFFFF;
+        --secondary-background-color: #F0F2F6;
+        --text-color: #31333F;
+    }}
+
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayRoman.ttf') format('truetype');
-        font-weight: 400;
+        font-weight: 400; font-display: swap;
     }}
     @font-face {{
         font-family: 'NeueHaas';
         src: url('{github_base}NeueHaasDisplayMediu.ttf') format('truetype');
-        font-weight: 500;
+        font-weight: 500; font-display: swap;
     }}
 
-    /* Global Reset to 500 Medium */
-    html, body, [class*="st-"], div, span, p, h1, h2, h3 {{
-        font-family: 'NeueHaas', -apple-system, sans-serif !important;
-        text-transform: none !important;
-        font-weight: 500 !important; 
+    /* 2. GLOBAL BACKGROUND (Targets Main Container only) */
+    [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
         background-color: white !important;
+    }}
+
+    /* 3. STRICT WEIGHT CONFORMANCE */
+    /* Medium (500): Headers, Metrics, Buttons */
+    h1, h2, h3, [data-testid="stMetricValue"], .stButton > button {{
+        font-family: 'NeueHaas', -apple-system, sans-serif !important;
+        font-weight: 500 !important;
+        color: #1A1A1A !important;
+        text-transform: none !important;
+    }}
+
+    /* Roman (400): Everything else */
+    p, span, label, [data-testid="stMetricLabel"], .stCaption, .subtitle, div[role="radiogroup"] label p {{
+        font-family: 'NeueHaas', -apple-system, sans-serif !important;
+        font-weight: 400 !important;
         color: #31333F !important;
     }}
 
-    /* Specific Overrides to 400 Roman */
+    /* 4. LAYOUT FIXES */
+    h1 {{ letter-spacing: -1.2px; font-size: 2.8rem !important; }}
+    
     .subtitle {{
-        font-weight: 400 !important;
         font-size: 1.15rem;
         color: #555 !important;
         margin-top: -20px;
         margin-bottom: 30px;
     }}
 
-    div[role="radiogroup"] label p {{ font-weight: 400 !important; color: #31333F !important; opacity: 1 !important; }}
-    div[data-baseweb="select"] div {{ font-weight: 400 !important; }}
-    [data-testid="stMetricLabel"] {{ letter-spacing: 0px; font-size: 15px !important; color: #555; font-weight: 400 !important; }}
-    label, div[role="radiogroup"] label {{ font-size: 1rem !important; font-weight: 400 !important; }}
-    .stCaption {{ color: #888; font-weight: 400 !important; }}
-    
-    .custom-footer {{
-        font-family: 'NeueHaas' !important;
-        font-weight: 400 !important;
-        font-size: 0.85rem !important;
-        color: #AAA !important;
-        margin-top: 4rem;
-        padding-top: 1rem;
-        border-top: 1px solid #EEE;
-    }}
-
-    /* Header & Metric Fixes */
-    h1 {{ letter-spacing: -1.2px; font-size: 2.8rem !important; color: #1A1A1A !important; }}
-    h3 {{ letter-spacing: -0.5px; color: #444 !important; }}
-    [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A !important; }}
-    .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
-
-    /* Button Styling */
+    /* 5. BUTTON STYLING (FIXES THE BLACK BLOCK) */
     .stButton > button {{
         background-color: #1A1A1A !important;
-        color: #FFFFFF !important;
+        color: white !important;
         border-radius: 8px !important;
         width: 100% !important;
-        font-weight: 500 !important;
-        border: none !important;
         padding: 0.6rem !important;
+        border: none !important;
     }}
     .stButton > button p {{ color: white !important; font-weight: 500 !important; }}
 
-    /* Image Blending */
+    /* 6. IMAGE BLENDING */
     [data-testid="stImage"] img {{
         width: 240px !important;
         height: auto !important;
@@ -117,6 +114,12 @@ st.markdown(f"""
         background-color: white !important;
         border-radius: 12px;
     }}
+
+    /* Metric Font Fix */
+    [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A !important; }}
+
+    /* 7. SLIDER FIX (Ensures tracks are visible) */
+    .stSlider [data-baseweb="slider"] {{ background-color: transparent !important; }}
 
     #MainMenu, footer {{visibility: hidden;}}
     </style>
@@ -160,7 +163,7 @@ if st.session_state.show_report:
     
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
     st.caption("Data reflects the April 2026 revised official pricing.")
-    st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-weight: 400; font-size: 0.85rem; color: #AAA; margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #EEE;">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
     
     if st.button("Start Again"):
         st.session_state.show_report = False
