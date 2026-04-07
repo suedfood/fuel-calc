@@ -46,10 +46,11 @@ def trigger_report():
     st.session_state.show_report = True
 
 def absolute_reset():
+    # FIXED: Clear state without redundant rerun call
     st.session_state.clear()
-    st.rerun()
+    st.session_state.show_report = False
 
-# 3. CSS FORCE FIELD: STRICT APPROVED WEIGHTS
+# 3. CSS FORCE FIELD: LOCKED FONT WEIGHTS
 st.markdown(f"""
     <style>
     @font-face {{
@@ -63,7 +64,7 @@ st.markdown(f"""
         font-weight: 500; font-display: swap;
     }}
 
-    /* Global Base: 500 Medium (Approved) */
+    /* Global Base: 500 Medium */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], 
     [class*="st-"], div, span, p, h1, h2, h3 {{
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
@@ -76,7 +77,7 @@ st.markdown(f"""
         background-color: white !important;
     }}
 
-    /* Specific Overrides: 400 Roman (Approved) */
+    /* Specific Overrides: 400 Roman */
     .subtitle {{
         font-weight: 400 !important;
         font-size: 1.15rem;
@@ -107,7 +108,7 @@ st.markdown(f"""
     [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px; color: #1A1A1A !important; font-weight: 500 !important; }}
     .stAlert p {{ font-size: 1.15rem; line-height: 1.5; font-weight: 500 !important; }}
 
-    /* Default Button Style (500 Medium) */
+    /* Button Styling */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: white !important;
@@ -167,7 +168,6 @@ if cat_choice:
 
 # --- THE REPORT ---
 if st.session_state.show_report:
-    # Calculations based on latest session state
     refill_vol = 1 - (st.session_state.tank_slider / 10)
     current_tank = categories[st.session_state.cat_radio][st.session_state.model_select]
     per_tank = (current_tank * refill_vol) * fuel_impacts[st.session_state.fuel_select]["hike"]
