@@ -175,7 +175,7 @@ if cat_choice:
         
         if fuel_choice:
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2, key="fills_slider")
-            tank_scale = st.slider("On a scale of 1 to 10, how full is your tank when you refuel?", 1, 10, 2, key="tank_slider")
+            tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2, key="tank_slider")
             
             # Action Button (500 Medium)
             if not st.session_state.show_report:
@@ -183,22 +183,24 @@ if cat_choice:
 
 # --- THE REPORT ---
 if st.session_state.show_report:
-    refill_vol = 1 - (st.session_state.tank_slider / 10)
-    current_tank = categories[st.session_state.cat_radio][st.session_state.model_select]
-    per_tank = (current_tank * refill_vol) * fuel_impacts[st.session_state.fuel_select]["hike"]
-    monthly = per_tank * st.session_state.fills_slider
+    # SAFETY CHECK: Only calculate if inputs haven't been cleared (fixes KeyError: None)
+    if all(st.session_state.get(k) is not None for k in ["cat_radio", "model_select", "fuel_select"]):
+        refill_vol = 1 - (st.session_state.tank_slider / 10)
+        current_tank = categories[st.session_state.cat_radio][st.session_state.model_select]
+        per_tank = (current_tank * refill_vol) * fuel_impacts[st.session_state.fuel_select]["hike"]
+        monthly = per_tank * st.session_state.fills_slider
 
-    st.divider()
-    st.subheader("Fuel Impact Report")
-    c1, c2 = st.columns(2)
-    c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
-    c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
-    
-    st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
-    st.caption("Data reflects the April 2026 revised official pricing.")
-    st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
-    
-    # WRAPPED FOR ROMAN WEIGHT OVERRIDE
-    st.markdown('<div class="roman-btn">', unsafe_allow_html=True)
-    st.button("Start Again", on_click=absolute_reset)
-    st.markdown('</div>', unsafe_allow_html=True)
+        st.divider()
+        st.subheader("Fuel Impact Report")
+        c1, c2 = st.columns(2)
+        c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
+        c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
+        
+        st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
+        st.caption("Data reflects the April 2026 revised official pricing.")
+        st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
+        
+        # WRAPPED FOR ROMAN WEIGHT OVERRIDE
+        st.markdown('<div class="roman-btn">', unsafe_allow_html=True)
+        st.button("Start Again", on_click=absolute_reset)
+        st.markdown('</div>', unsafe_allow_html=True)
