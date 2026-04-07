@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 
-# 1. THE DATA: Official Revised Data as of April 2026
+# 1. THE DATA: Official Revised Data as of April 07, 2026
 # Petrol saw an Rs. 80 rollback; Diesel remains at the peak.
 fuel_impacts = {
     "Petrol": {"hike": 56.83, "current": 378.00},
@@ -47,10 +47,10 @@ if 'show_report' not in st.session_state:
 def trigger_report():
     st.session_state.show_report = True
 
-# 4. CSS FORCE FIELD: STRICT FONT WEIGHT CONFORMANCE
+# 4. CSS FORCE FIELD: PIXEL-PERFECT FONT WEIGHTS
 st.markdown(f"""
     <style>
-    /* THEME LOCK */
+    /* 1. DARK MODE KILLER */
     :root {{
         --primary-color: #FF4B4B;
         --background-color: #FFFFFF;
@@ -72,23 +72,28 @@ st.markdown(f"""
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
         background-color: white !important;
         color: #31333F !important;
-        font-family: 'NeueHaas', -apple-system, sans-serif !important;
+        font-family: 'NeueHaas', sans-serif !important;
     }}
 
-    /* --- WEIGHT 500: HEADERS, DATE, METRIC VALUES, BUTTONS --- */
+    /* --- STRICT WEIGHT 500: HEADERS, DATE, METRIC NUMBERS, BUTTONS --- */
     h1, h2, h3, [data-testid="stMetricValue"], .stButton > button, .stButton > button p {{
         font-family: 'NeueHaas', sans-serif !important;
         font-weight: 500 !important;
         color: #1A1A1A !important;
+        text-transform: none !important;
     }}
+    
     h1 {{ letter-spacing: -1.2px !important; font-size: clamp(2rem, 8vw, 2.8rem) !important; }}
+    [data-testid="stMetricValue"] {{ font-size: clamp(2.2rem, 10vw, 42px) !important; letter-spacing: -0.8px !important; }}
 
-    /* --- WEIGHT 400: LABELS, CAPTIONS, BODY, SUBTITLE --- */
-    p, span, label, [data-testid="stMetricLabel"], .stCaption, .subtitle, div[role="radiogroup"] label p {{
+    /* --- STRICT WEIGHT 400: ALL LABELS, SUBTITLE, CAPTIONS, SLIDERS --- */
+    p, span, label, [data-testid="stMetricLabel"], .stCaption, .subtitle, div[role="radiogroup"] label p, div[data-baseweb="select"] div {{
         font-family: 'NeueHaas', sans-serif !important;
         font-weight: 400 !important;
         color: #31333F !important;
+        text-transform: none !important;
     }}
+    
     .subtitle {{
         font-size: clamp(1rem, 4vw, 1.15rem) !important;
         color: #555 !important;
@@ -96,7 +101,7 @@ st.markdown(f"""
         margin-bottom: 30px;
     }}
 
-    /* BUTTON HARDENING */
+    /* BUTTON HARDENING - LET'S GO! */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: #FFFFFF !important;
@@ -108,7 +113,7 @@ st.markdown(f"""
     }}
     .stButton > button p {{ color: white !important; }}
 
-    /* IMAGE & METRICS */
+    /* IMAGE BLENDING */
     [data-testid="stImage"] img {{
         max-width: 100% !important;
         height: auto !important;
@@ -116,10 +121,6 @@ st.markdown(f"""
         border-radius: 12px !important;
         mix-blend-mode: multiply;
         background-color: white !important;
-    }}
-    [data-testid="stMetricValue"] {{ 
-        font-size: clamp(2.2rem, 10vw, 42px) !important; 
-        letter-spacing: -0.8px !important; 
     }}
 
     /* Fix Dark Mode Radio Visibility */
@@ -135,40 +136,51 @@ st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
 # --- SEAMLESS AUTO-REVEAL FLOW ---
+# STEP 1: CATEGORY
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None)
 
 if cat_choice:
-    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose car...")
+    # STEP 2: MODEL
+    model_choice = st.selectbox("Which vehicle do you drive?", list(categories[cat_choice].keys()), index=None, placeholder="Choose your car...")
     
     if model_choice:
         tank_size = categories[cat_choice][model_choice]
         st.image(vehicle_images.get(model_choice, github_base + "CD70.png"))
         
+        # STEP 3: FUEL
         fuel_choice = st.selectbox("Fuel type", ["Petrol", "Diesel"], index=None, placeholder="Select fuel...")
         
         if fuel_choice:
+            # STEP 4: REFILLS
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2)
+            
+            # STEP 5: TANK SCALE
             tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2)
             
+            # THE ONLY BUTTON
             st.button("Let's Go!", on_click=trigger_report)
 
 # --- THE REPORT ---
 if st.session_state.show_report:
-    refill_vol = 1 - (tank_scale / 10)
-    hike = fuel_impacts[fuel_choice]["hike"]
-    per_tank = (tank_size * refill_vol) * hike
-    monthly = per_tank * fills
+    try:
+        refill_vol = 1 - (tank_scale / 10)
+        hike = fuel_impacts[fuel_choice]["hike"]
+        per_tank = (tank_size * refill_vol) * hike
+        monthly = per_tank * fills
 
-    st.divider()
-    st.subheader("Fuel Impact Report")
-    c1, c2 = st.columns(2)
-    c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
-    c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
-    
-    st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
-    st.caption("Data reflects the April official price re-basing compared to March 2026.")
-    st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
-    
-    if st.button("Start Again"):
-        st.session_state.show_report = False
-        st.rerun()
+        st.divider()
+        st.subheader("Fuel Impact Report")
+        
+        c1, c2 = st.columns(2)
+        c1.metric("Additional cost per tank", f"Rs. {per_tank:,.0f}")
+        c2.metric("Total additional monthly cost", f"Rs. {monthly:,.0f}")
+        
+        st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
+        st.caption("Data reflects the April official price re-basing compared to March 2026.")
+        st.markdown('<p style="font-weight: 400; font-size: 0.85rem; color: #AAA; margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #EEE;">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
+        
+        if st.button("Start Again"):
+            st.session_state.show_report = False
+            st.rerun()
+    except NameError:
+        st.warning("Please complete all steps above first.")
