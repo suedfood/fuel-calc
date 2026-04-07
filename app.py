@@ -49,7 +49,7 @@ def absolute_reset():
     st.session_state.clear()
     st.session_state.show_report = False
 
-# 3. CSS FORCE FIELD: INDESTRUCTIBLE WEIGHTS
+# 3. CSS FORCE FIELD: STRICT WEIGHTS & DARK MODE MENU FIX
 st.markdown(f"""
     <style>
     @font-face {{
@@ -63,39 +63,52 @@ st.markdown(f"""
         font-weight: 500; font-display: swap;
     }}
 
-    /* --- GLOBAL FOUNDATION (500 MEDIUM) --- */
-    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"], 
-    [class*="st-"], h1, h2, h3, .stSubheader, [data-testid="stMetricValue"] {{
-        font-family: 'NeueHaas', -apple-system, sans-serif !important;
-        font-weight: 500 !important; 
-        color: #1A1A1A !important;
+    /* Global Base */
+    html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
         background-color: white !important;
-        text-transform: none !important;
+        color: #31333F !important;
+        font-family: 'NeueHaas', -apple-system, sans-serif !important;
     }}
 
-    /* --- ROMAN OVERRIDES (400 ROMAN) --- */
+    /* --- WEIGHT 500 (MEDIUM): Approved for Headers, Metrics, Let's Go --- */
+    h1, h2, h3, [data-testid="stMetricValue"], .main-btn button p {{
+        font-family: 'NeueHaas', sans-serif !important;
+        font-weight: 500 !important;
+        color: #1A1A1A !important;
+        text-transform: none !important;
+    }}
+    h1 {{ letter-spacing: -1.2px !important; font-size: clamp(2rem, 8vw, 2.8rem) !important; }}
+    [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px !important; }}
+
+    /* --- WEIGHT 400 (ROMAN): Approved for Labels, Subtitles, Captions, Start Again --- */
     p, span, label, [data-testid="stMetricLabel"], .stCaption, .subtitle, 
     div[role="radiogroup"] label p, div[data-baseweb="select"] div, .roman-btn button p {{
         font-family: 'NeueHaas', sans-serif !important;
         font-weight: 400 !important;
         color: #31333F !important;
+        text-transform: none !important;
+    }}
+    
+    .subtitle {{
+        font-size: clamp(1rem, 4vw, 1.15rem) !important;
+        color: #555 !important;
+        margin-top: -20px;
+        margin-bottom: 30px;
     }}
 
-    h1 {{ letter-spacing: -1.2px !important; font-size: clamp(2rem, 8vw, 2.8rem) !important; }}
-    .subtitle {{ font-size: 1.15rem; color: #555 !important; margin-top: -20px; margin-bottom: 30px; }}
-    [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px !important; }}
-
-    /* DROPDOWN & POPOVER (FIXING DARK MODE + LOCKING WEIGHT) */
+    /* DROPDOWN MENU FIX (Targets the expanded list items) */
     div[data-baseweb="select"] > div {{
         background-color: #F0F2F6 !important;
+        color: #31333F !important;
     }}
+    
+    /* This targets the floating menu list */
     [data-baseweb="popover"] ul {{
         background-color: white !important;
     }}
     [data-baseweb="popover"] li {{
         background-color: white !important;
         color: #31333F !important;
-        font-family: 'NeueHaas', sans-serif !important;
         font-weight: 400 !important;
     }}
 
@@ -106,31 +119,33 @@ st.markdown(f"""
         border-radius: 8px !important;
         width: 100% !important;
         padding: 0.6rem 1rem !important;
+        margin-top: 20px;
         border: none !important;
-        font-weight: 500 !important;
     }}
     .stButton > button p {{ color: white !important; }}
-    .roman-btn button p {{ font-weight: 400 !important; }}
 
-    /* UI FIXES */
+    /* IMAGE & METRICS */
     [data-testid="stImage"] img {{
-        width: 240px !important;
+        max-width: 100% !important;
         height: auto !important;
+        width: 240px !important;
+        border-radius: 12px !important;
         mix-blend-mode: multiply;
         background-color: white !important;
-        border-radius: 12px;
     }}
+
+    /* UI Fixes */
     div[role="radiogroup"] label p {{ opacity: 1 !important; }}
     #MainMenu, footer {{visibility: hidden;}}
     </style>
     """, unsafe_allow_html=True)
 
-# --- APP CONTENT ---
+# --- HEADER SECTION ---
 st.title("⛽️ Pakistan Fuel Hike Impact")
 st.markdown(f"### {datetime.now().strftime('%B %d, %Y')}")
 st.markdown('<p class="subtitle">Find out how much more you’ll spend on fuel each month</p>', unsafe_allow_html=True)
 
-# SEAMLESS AUTO-REVEAL FLOW
+# --- SEAMLESS AUTO-REVEAL FLOW ---
 cat_choice = st.radio("Select vehicle category", list(categories.keys()), horizontal=True, index=None, key="cat_radio")
 
 if cat_choice:
@@ -146,10 +161,13 @@ if cat_choice:
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2, key="fills_slider")
             tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2, key="tank_slider")
             
+            # Action Button (500 Medium)
             if not st.session_state.show_report:
+                st.markdown('<div class="main-btn">', unsafe_allow_html=True)
                 st.button("Let's Go!", on_click=trigger_report)
+                st.markdown('</div>', unsafe_allow_html=True)
 
-# THE REPORT
+# --- THE REPORT ---
 if st.session_state.show_report:
     refill_vol = 1 - (st.session_state.tank_slider / 10)
     current_tank = categories[st.session_state.cat_radio][st.session_state.model_select]
@@ -166,6 +184,7 @@ if st.session_state.show_report:
     st.caption("Data reflects the April 2026 revised official pricing.")
     st.markdown('<p style="font-weight: 400; font-size: 0.85rem; color: #AAA; margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #EEE;">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
     
+    # Reset Button (400 Roman)
     st.markdown('<div class="roman-btn">', unsafe_allow_html=True)
     st.button("Start Again", on_click=absolute_reset)
     st.markdown('</div>', unsafe_allow_html=True)
