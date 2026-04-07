@@ -2,6 +2,7 @@ import streamlit as st
 from datetime import datetime
 
 # 1. THE DATA: Revised as of April 07, 2026
+# Petrol rollback included (March base: 321.17 -> Current: 378.00)
 fuel_impacts = {
     "Petrol": {"hike": 56.83, "current": 378.00},
     "Diesel": {"hike": 184.49, "current": 520.35}
@@ -46,12 +47,10 @@ def trigger_report():
     st.session_state.show_report = True
 
 def absolute_reset():
-    # Clear session state WITHOUT rerun (Streamlit handles rerun automatically after callback)
-    for key in st.session_state.keys():
-        del st.session_state[key]
+    st.session_state.clear()
     st.session_state.show_report = False
 
-# 3. CSS FORCE FIELD: STRICT APPROVED WEIGHTS
+# 3. CSS FORCE FIELD: STRICT APPROVED WEIGHTS & UI FIXES
 st.markdown(f"""
     <style>
     @font-face {{
@@ -65,13 +64,14 @@ st.markdown(f"""
         font-weight: 500; font-display: swap;
     }}
 
-    /* Global Base: Targeting background and font-family */
+    /* Global Foundation */
     html, body, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {{
         background-color: white !important;
+        color: #31333F !important;
         font-family: 'NeueHaas', -apple-system, sans-serif !important;
     }}
 
-    /* --- WEIGHT 500 (MEDIUM): HEADERS, METRIC VALUES, MAIN ACTION --- */
+    /* --- WEIGHT 500 (MEDIUM): Approved for Headers, Metrics, Let's Go --- */
     h1, h2, h3, [data-testid="stMetricValue"], .main-btn button p {{
         font-family: 'NeueHaas', sans-serif !important;
         font-weight: 500 !important;
@@ -81,7 +81,7 @@ st.markdown(f"""
     h1 {{ letter-spacing: -1.2px !important; font-size: clamp(2rem, 8vw, 2.8rem) !important; }}
     [data-testid="stMetricValue"] {{ font-size: 42px !important; letter-spacing: -0.8px !important; }}
 
-    /* --- WEIGHT 400 (ROMAN): LABELS, SUBTITLE, CAPTIONS, RESET BUTTON --- */
+    /* --- WEIGHT 400 (ROMAN): Approved for Labels, Subtitles, Captions, Start Again --- */
     p, span, label, [data-testid="stMetricLabel"], .stCaption, .subtitle, 
     div[role="radiogroup"] label p, div[data-baseweb="select"] div, .roman-btn button p {{
         font-family: 'NeueHaas', sans-serif !important;
@@ -97,7 +97,7 @@ st.markdown(f"""
         margin-bottom: 30px;
     }}
 
-    /* BUTTONS: Global Block Style */
+    /* BUTTONS */
     .stButton > button {{
         background-color: #1A1A1A !important;
         color: white !important;
@@ -119,7 +119,7 @@ st.markdown(f"""
         background-color: white !important;
     }}
 
-    /* UI Fixes: Keep sliders visible */
+    /* UI Fixes */
     div[role="radiogroup"] label p {{ opacity: 1 !important; }}
     #MainMenu, footer {{visibility: hidden;}}
     </style>
@@ -146,7 +146,7 @@ if cat_choice:
             fills = st.slider("How many times do you refuel each month?", 1, 10, 2, key="fills_slider")
             tank_scale = st.slider("On average, how full is your tank when you refuel?", 1, 10, 2, key="tank_slider")
             
-            # Action Button: Medium 500
+            # Action Button (500 Medium)
             if not st.session_state.show_report:
                 st.markdown('<div class="main-btn">', unsafe_allow_html=True)
                 st.button("Let's Go!", on_click=trigger_report)
@@ -167,9 +167,9 @@ if st.session_state.show_report:
     
     st.error(f"To continue business as usual, you'll have to pay an additional Rs. {monthly:,.0f} per month")
     st.caption("Data reflects the April 2026 revised official pricing.")
-    st.markdown('<p style="font-weight: 400; font-size: 0.85rem; color: #AAA; margin-top: 4rem; padding-top: 1rem; border-top: 1px solid #EEE;">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
+    st.markdown('<p class="custom-footer">Created by Syed Fahad Rizwan</p>', unsafe_allow_html=True)
     
-    # Reset Button: Roman 400
+    # Reset Button (400 Roman)
     st.markdown('<div class="roman-btn">', unsafe_allow_html=True)
     st.button("Start Again", on_click=absolute_reset)
     st.markdown('</div>', unsafe_allow_html=True)
